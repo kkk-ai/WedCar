@@ -1,0 +1,210 @@
+<%- include('../header.ejs') %>
+
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 30px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: inherit;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #f58220;
+        box-shadow: 0 0 5px rgba(245, 130, 32, 0.3);
+    }
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    .button-group {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    .btn-submit {
+        background-color: #f58220;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .btn-submit:hover {
+        background-color: #e67616;
+    }
+    .btn-cancel {
+        background-color: #ccc;
+        color: #333;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-cancel:hover {
+        background-color: #bbb;
+    }
+    .error-message {
+        color: #d32f2f;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .success-message {
+        color: #388e3c;
+        padding: 10px;
+        background-color: #c8e6c9;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container">
+    <div class="form-container">
+        <h1 class="form-title">📝 Thêm Người Dùng Mới</h1>
+
+        <form id="formThemNguoiDung" method="POST" action="/api/nguoidung">
+            <div class="form-group">
+                <label for="hoTen">Họ tên: <span style="color: red;">*</span></label>
+                <input type="text" id="hoTen" name="hoTen" required placeholder="Nhập họ tên">
+                <div class="error-message" id="errorHoTen"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email: <span style="color: red;">*</span></label>
+                <input type="email" id="email" name="email" required placeholder="Nhập email">
+                <div class="error-message" id="errorEmail"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="matKhau">Mật khẩu: <span style="color: red;">*</span></label>
+                <input type="password" id="matKhau" name="matKhau" required placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)">
+                <div class="error-message" id="errorMatKhau"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="soDienThoai">Số điện thoại:</label>
+                <input type="tel" id="soDienThoai" name="soDienThoai" placeholder="Nhập số điện thoại">
+            </div>
+
+            <div class="form-group">
+                <label for="diaChi">Địa chỉ:</label>
+                <textarea id="diaChi" name="diaChi" placeholder="Nhập địa chỉ"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="quyenHan">Quyền hạn:</label>
+                <select id="quyenHan" name="quyenHan">
+                    <option value="khachHang">Khách hàng</option>
+                    <option value="quanTri">Quản trị viên</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-submit">✅ Thêm Người Dùng</button>
+                <a href="/api/nguoidung" class="btn-cancel">❌ Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('formThemNguoiDung').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const hoTen = document.getElementById('hoTen').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const matKhau = document.getElementById('matKhau').value;
+        const soDienThoai = document.getElementById('soDienThoai').value.trim();
+        const diaChi = document.getElementById('diaChi').value.trim();
+        const quyenHan = document.getElementById('quyenHan').value;
+
+        // Xóa thông báo lỗi
+        document.getElementById('errorHoTen').textContent = '';
+        document.getElementById('errorEmail').textContent = '';
+        document.getElementById('errorMatKhau').textContent = '';
+
+        // Kiểm tra validation
+        let hasError = false;
+        if (!hoTen) {
+            document.getElementById('errorHoTen').textContent = 'Vui lòng nhập họ tên';
+            hasError = true;
+        }
+        if (!email) {
+            document.getElementById('errorEmail').textContent = 'Vui lòng nhập email';
+            hasError = true;
+        }
+        if (matKhau.length < 6) {
+            document.getElementById('errorMatKhau').textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+            hasError = true;
+        }
+
+        if (hasError) return;
+
+        try {
+            const response = await fetch('/api/nguoidung', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    hoTen,
+                    email,
+                    matKhau,
+                    soDienThoai,
+                    diaChi,
+                    quyenHan
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('✅ Thêm người dùng thành công!');
+                window.location.href = '/api/nguoidung';
+            } else {
+                alert('❌ Lỗi: ' + data.message);
+            }
+        } catch (error) {
+            alert('❌ Lỗi khi thêm người dùng: ' + error.message);
+        }
+    });
+</script>
+
+<%- include('../footer.ejs') %>

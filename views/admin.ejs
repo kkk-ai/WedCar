@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <%- include('header') %>
+</head>
+<body>
+  <div class="container mt-3">
+    
+
+    <div class="card mb-3">
+      <div class="card-header bg-gradient-primary text-white">
+        <h2><i class="bi bi-speedometer2"></i> Bảng điều khiển Admin</h2>
+        <p class="mb-0">Chào mừng <strong><%= user?.hoTen %></strong> đến trang quản trị.</p>
+      </div>
+      <div class="card-body">
+        <div class="row gy-3">
+          <div class="col-lg-4 col-md-6">
+            <a href="/api/nguoidung" class="text-decoration-none">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Người dùng</h5>
+                  <p class="card-text">Thêm, sửa, xóa người dùng.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-12">
+            <div class="card mb-3 px-3 py-3">
+              <h5 class="fw-bold">Thống kê nhanh</h5>
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="p-3 bg-light rounded-2 text-center">
+                    <h3 id="totalUsers">...</h3>
+                    <span>Người dùng</span>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="p-3 bg-light rounded-2 text-center">
+                    <h3 id="totalVehicles">...</h3>
+                    <span>Xe</span>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="p-3 bg-light rounded-2 text-center">
+                    <h3 id="totalOrders">...</h3>
+                    <span>Đơn hàng</span>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="p-3 bg-light rounded-2 text-center">
+                    <h3 id="pendingAppointments">...</h3>
+                    <span>Lịch hẹn chờ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <a href="/api/cuahang" class="text-decoration-none">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Cửa hàng</h5>
+                  <p class="card-text">Quản lý chi nhánh và thông tin cửa hàng.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <a href="/api/xe" class="text-decoration-none">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Xe</h5>
+                  <p class="card-text">Quản lý kho xe, thêm mới và cập nhật thông số.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <a href="/api/lichhen" class="text-decoration-none">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Lịch hẹn</h5>
+                  <p class="card-text">Xem và xử lý lịch hẹn khách.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <a href="/api/donhang" class="text-decoration-none">
+              <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                  <h5 class="card-title">Đơn hàng</h5>
+                  <p class="card-text">Theo dõi đơn, cập nhật trạng thái và doanh thu.</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include('footer') %>
+  </div>
+  <%- include('javascript') %>
+  <script>
+    async function initAdminStats() {
+      try {
+        const [usersRes, xeRes, ordersRes, appointmentRes] = await Promise.all([
+          fetch('/api/nguoidung/api/list'),
+          fetch('/api/xe/api/list'),
+          fetch('/api/donhang/api/list'),
+          fetch('/api/lichhen/api/list')
+        ]);
+        const [users, vehicles, orders, appointments] = await Promise.all([usersRes.json(), xeRes.json(), ordersRes.json(), appointmentRes.json()]);
+
+        document.getElementById('totalUsers').innerText = users.length;
+        document.getElementById('totalVehicles').innerText = vehicles.length;
+        document.getElementById('totalOrders').innerText = orders.length;
+        document.getElementById('pendingAppointments').innerText = appointments.filter(a => a.trangThai === 'ChoXacNhan').length;
+      } catch (error) {
+        console.error('Không thể tải thống kê', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initAdminStats);
+  </script>
+</body>
+</html>

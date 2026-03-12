@@ -1,0 +1,404 @@
+<%- include('../header') %>
+
+<style>
+  .order-form-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 15px;
+  }
+
+  .form-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 0;
+  }
+
+  .form-header h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .form-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .form-body {
+    padding: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #f58220;
+    box-shadow: 0 0 5px rgba(245, 130, 32, 0.3);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .info-box {
+    background: #e7f3ff;
+    border-left: 4px solid #2196F3;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #0c5460;
+  }
+
+  .status-info {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+
+  .status-info strong {
+    color: #333;
+  }
+
+  .current-items {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+
+  .current-items-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+  }
+
+  .item-info {
+    flex: 1;
+  }
+
+  .item-name {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .item-qty {
+    color: #999;
+    font-size: 12px;
+  }
+
+  .item-price {
+    font-weight: bold;
+    color: #f58220;
+    min-width: 100px;
+    text-align: right;
+  }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border-radius: 3px;
+    border-top: 2px solid #ddd;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  .total-label {
+    color: #333;
+  }
+
+  .total-amount {
+    color: #f58220;
+    font-size: 18px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    flex: 1;
+    text-align: center;
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+
+  .btn-submit:hover {
+    opacity: 0.9;
+  }
+
+  .btn-cancel {
+    background: #e9ecef;
+    color: #333;
+  }
+
+  .btn-cancel:hover {
+    background: #ddd;
+  }
+
+  .btn-delete {
+    background: #dc3545;
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background: #c82333;
+  }
+
+  .required {
+    color: #dc3545;
+  }
+
+  .delete-button-group {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 2px solid #eee;
+  }
+
+  .loading-spinner {
+    display: none;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #f58220;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .item-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .item-price {
+      width: 100%;
+      text-align: left;
+      margin-top: 5px;
+    }
+  }
+</style>
+
+<div class="order-form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h1>📝 Sửa Đơn Hàng</h1>
+    </div>
+    <form class="form-body" id="orderForm">
+      <div class="info-box">
+        ℹ️ Cập nhật thông tin đơn hàng
+      </div>
+
+      <div class="status-info">
+        <strong>Trạng Thái:</strong> 
+        <span id="currentStatus">
+          <% if (donHang.trangThai === 'ChoXacNhan') { %>
+            Chờ Xác Nhận
+          <% } else if (donHang.trangThai === 'DangXuLy') { %>
+            Đang Xử Lý
+          <% } else if (donHang.trangThai === 'HoanThanh') { %>
+            Hoàn Thành
+          <% } else { %>
+            Bị Hủy
+          <% } %>
+        </span>
+      </div>
+
+      <div class="current-items">
+        <div class="current-items-title">📦 Danh Sách Xe Hiện Tại:</div>
+        <% if (donHang.danhSachXe && donHang.danhSachXe.length > 0) { %>
+          <% donHang.danhSachXe.forEach(item => { %>
+            <div class="item-row">
+              <div class="item-info">
+                <div class="item-name"><%= item.xe.tenXe || 'Xe không xác định' %></div>
+                <div class="item-qty">Số lượng: <%= item.soLuong %></div>
+              </div>
+              <div class="item-price"><%= new Intl.NumberFormat('vi-VN').format(item.giaTaiThoiDiemMua) %> đ</div>
+            </div>
+          <% }); %>
+          <div class="total-row">
+            <div class="total-label">Tổng Cộng:</div>
+            <div class="total-amount"><%= new Intl.NumberFormat('vi-VN').format(donHang.tongTien) %> đ</div>
+          </div>
+        <% } else { %>
+          <p style="color: #999;">Không có xe nào trong đơn hàng</p>
+        <% } %>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="trangThai">Trạng Thái <span class="required">*</span></label>
+          <select id="trangThai" name="trangThai" required>
+            <option value="ChoXacNhan" <%= donHang.trangThai === 'ChoXacNhan' ? 'selected' : '' %>>Chờ Xác Nhận</option>
+            <option value="DangXuLy" <%= donHang.trangThai === 'DangXuLy' ? 'selected' : '' %>>Đang Xử Lý</option>
+            <option value="HoanThanh" <%= donHang.trangThai === 'HoanThanh' ? 'selected' : '' %>>Hoàn Thành</option>
+            <option value="DaHuy" <%= donHang.trangThai === 'DaHuy' ? 'selected' : '' %>>Bị Hủy</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="tongTien">Tổng Tiền (VND)</label>
+          <input type="number" id="tongTien" name="tongTien" value="<%= donHang.tongTien %>" min="0" step="1000">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="ghiChu">Ghi Chú</label>
+        <textarea id="ghiChu" name="ghiChu" placeholder="Nhập ghi chú hoặc yêu cầu khác..."><%= donHang.ghiChu || '' %></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-submit">✔️ Cập Nhật</button>
+        <a href="/api/donhang/" class="btn btn-cancel">✕ Hủy</a>
+      </div>
+
+      <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p>Đang xử lý...</p>
+      </div>
+    </form>
+
+    <div class="form-body delete-button-group">
+      <button type="button" class="btn btn-delete" onclick="deleteOrder('<%= donHang._id %>')">🗑️ Xóa Đơn Hàng Này</button>
+    </div>
+  </div>
+</div>
+
+const vehicleList = <%- JSON.stringify(donHang.danhSachXe.map(item => ({
+    xe: item.xe._id,
+    soLuong: item.soLuong,
+    giaTaiThoiDiemMua: item.giaTaiThoiDiemMua
+  }))) %>;
+
+<script>
+  
+
+  document.getElementById('orderForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = {
+      trangThai: document.getElementById('trangThai').value,
+      tongTien: parseInt(document.getElementById('tongTien').value) || 0,
+      danhSachXe: vehicleList
+    };
+
+    document.getElementById('loadingSpinner').style.display = 'block';
+
+    try {
+      const response = await fetch('/api/donhang/<%= donHang._id %>', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Cập nhật đơn hàng thành công!');
+        window.location.href = '/api/donhang/';
+      } else {
+        alert('Lỗi: ' + (data.message || 'Không thể cập nhật đơn hàng'));
+      }
+    } catch (error) {
+      alert('Lỗi: ' + error.message);
+    } finally {
+      document.getElementById('loadingSpinner').style.display = 'none';
+    }
+  });
+
+  function deleteOrder(id) {
+    if (confirm('Bạn chắc chắn muốn xóa đơn hàng này?')) {
+      fetch('/api/donhang/' + id, {
+        method: 'DELETE'
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message || 'Xóa thành công');
+        window.location.href = '/api/donhang/';
+      })
+      .catch(error => alert('Lỗi: ' + error.message));
+    }
+  }
+</script>
+
+<%- include('../footer') %>

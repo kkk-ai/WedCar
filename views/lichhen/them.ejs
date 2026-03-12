@@ -1,0 +1,292 @@
+<%- include('../header') %>
+
+<style>
+  .appointment-form-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 0 15px;
+  }
+
+  .form-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 0;
+  }
+
+  .form-header h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .form-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .form-body {
+    padding: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #f58220;
+    box-shadow: 0 0 5px rgba(245, 130, 32, 0.3);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    flex: 1;
+  }
+
+  .btn-submit:hover {
+    opacity: 0.9;
+  }
+
+  .btn-cancel {
+    background: #e9ecef;
+    color: #333;
+    flex: 1;
+    text-align: center;
+  }
+
+  .btn-cancel:hover {
+    background: #ddd;
+  }
+
+  .required {
+    color: #dc3545;
+  }
+
+  .info-box {
+    background: #e7f3ff;
+    border-left: 4px solid #2196F3;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #0c5460;
+  }
+
+  .loading-spinner {
+    display: none;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #f58220;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<div class="appointment-form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h1>📅 Đặt Lịch Hẹn</h1>
+    </div>
+    <form class="form-body" id="appointmentForm">
+      <div class="info-box">
+        ℹ️ Vui lòng điền đầy đủ thông tin để đặt lịch hẹn tại cửa hàng
+      </div>
+
+      <div class="form-group">
+        <label for="xe">Chọn Xe <span class="required">*</span></label>
+        <select id="xe" name="xe" required>
+          <option value="">-- Chọn Xe --</option>
+          <% if (xeList && xeList.length > 0) { %>
+            <% xeList.forEach(x => { %>
+              <option value="<%= x._id %>"><%= x.tenXe %> - <%= x.hangXe %> (<%= new Date(x.namSanXuat).getFullYear() %>)</option>
+            <% }); %>
+          <% } %>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="ngayHen">Ngày Hẹn <span class="required">*</span></label>
+          <input type="date" id="ngayHen" name="ngayHen" required>
+        </div>
+        <div class="form-group">
+          <label for="gioHen">Giờ Hẹn <span class="required">*</span></label>
+          <input type="time" id="gioHen" name="gioHen" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="cuaHang">Cửa Hàng <span class="required">*</span></label>
+        <select id="cuaHang" name="cuaHang" required>
+          <option value="">-- Chọn Cửa Hàng --</option>
+          <% if (cuaHangList && cuaHangList.length > 0) { %>
+            <% cuaHangList.forEach(ch => { %>
+              <option value="<%= ch._id %>"><%= ch.tenCuaHang %> - <%= ch.diaChi %></option>
+            <% }); %>
+          <% } %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="ghiChu">Ghi Chú</label>
+        <textarea id="ghiChu" name="ghiChu" placeholder="Nhập ghi chú hoặc yêu cầu đặc biệt..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-submit">✔️ Đặt Lịch Hẹn</button>
+        <a href="/api/lichhen/" class="btn btn-cancel">✕ Hủy</a>
+      </div>
+
+      <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p>Đang xử lý...</p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById('appointmentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = {
+      xe: document.getElementById('xe').value,
+      ngayHen: document.getElementById('ngayHen').value,
+      gioHen: document.getElementById('gioHen').value,
+      cuaHang: document.getElementById('cuaHang').value,
+      ghiChu: document.getElementById('ghiChu').value,
+      nguoiDung: '<%= user?._id || "" %>'
+    };
+
+    // Validation
+    if (!formData.xe) {
+      alert('Vui lòng chọn xe');
+      return;
+    }
+    if (!formData.ngayHen) {
+      alert('Vui lòng chọn ngày');
+      return;
+    }
+    if (!formData.gioHen) {
+      alert('Vui lòng chọn giờ');
+      return;
+    }
+    if (!formData.cuaHang) {
+      alert('Vui lòng chọn cửa hàng');
+      return;
+    }
+
+    const selectedDate = new Date(formData.ngayHen);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      alert('Ngày hẹn phải là ngày trong tương lai');
+      return;
+    }
+
+    document.getElementById('loadingSpinner').style.display = 'block';
+
+    try {
+      const response = await fetch('/api/lichhen', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Đặt lịch hẹn thành công! Vui lòng chờ xác nhận từ cửa hàng.');
+        window.location.href = '/api/lichhen/';
+      } else {
+        alert('Lỗi: ' + (data.message || 'Không thể đặt lịch hẹn'));
+      }
+    } catch (error) {
+      alert('Lỗi: ' + error.message);
+    } finally {
+      document.getElementById('loadingSpinner').style.display = 'none';
+    }
+  });
+
+  // Set minimum date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('ngayHen').setAttribute('min', today);
+</script>
+
+<%- include('../footer') %>

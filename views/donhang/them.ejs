@@ -1,0 +1,463 @@
+<%- include('../header') %>
+
+<style>
+  .order-form-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 15px;
+  }
+
+  .form-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 0;
+  }
+
+  .form-header h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .form-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .form-body {
+    padding: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #f58220;
+    box-shadow: 0 0 5px rgba(245, 130, 32, 0.3);
+  }
+
+  .info-box {
+    background: #e7f3ff;
+    border-left: 4px solid #2196F3;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #0c5460;
+  }
+
+  .vehicles-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+  }
+
+  .section-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+  }
+
+  .vehicle-item {
+    background: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+  }
+
+  .vehicle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .vehicle-info {
+    flex: 1;
+  }
+
+  .vehicle-name {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .vehicle-price {
+    color: #f58220;
+    font-weight: bold;
+  }
+
+  .vehicle-qty {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .vehicle-qty input {
+    width: 60px;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+
+  .btn-remove {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .btn-remove:hover {
+    background: #c82333;
+  }
+
+  .selected-vehicles-list {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid #ddd;
+  }
+
+  .total-section {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: right;
+  }
+
+  .total-label {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .total-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #f58220;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    flex: 1;
+    text-align: center;
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+
+  .btn-submit:hover {
+    opacity: 0.9;
+  }
+
+  .btn-cancel {
+    background: #e9ecef;
+    color: #333;
+  }
+
+  .btn-cancel:hover {
+    background: #ddd;
+  }
+
+  .required {
+    color: #dc3545;
+  }
+
+  .loading-spinner {
+    display: none;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #f58220;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .selected-item {
+    padding: 10px;
+    background: #e7f3ff;
+    border-left: 3px solid #2196F3;
+    margin-bottom: 5px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .selected-item-text {
+    font-size: 13px;
+  }
+
+  .selected-item-remove {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    .vehicle-header {
+      flex-direction: column;
+    }
+
+    .vehicle-qty {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<div class="order-form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h1>🛒 Tạo Đơn Hàng Mới</h1>
+    </div>
+    <form class="form-body" id="orderForm">
+      <div class="info-box">
+        ℹ️ Tạo đơn hàng bằng cách chọn các xe từ danh sách dưới đây
+      </div>
+
+      <div class="vehicles-section">
+        <div class="section-title">🚗 Danh Sách Xe Khả Dụng</div>
+        <% if (xeList && xeList.length > 0) { %>
+          <% xeList.forEach(xe => { %>
+            <div class="vehicle-item">
+              <div class="vehicle-header">
+                <div class="vehicle-info">
+                  <div class="vehicle-name"><%= xe.tenXe %> - <%= xe.hangXe %></div>
+                  <div style="font-size: 12px; color: #999;">
+                    <%= new Date(xe.namSanXuat).getFullYear() %> | 
+                    <%= xe.nhienLieu %> | 
+                    Tồn kho: <%= xe.soLuongTon %>
+                  </div>
+                </div>
+                <div class="vehicle-price"><%= new Intl.NumberFormat('vi-VN').format(xe.giaBan) %> đ</div>
+              </div>
+              <div class="vehicle-qty">
+                <label style="margin-bottom: 0;">Số lượng:</label>
+                <input type="number" 
+                       class="vehicle-qty-input" 
+                       data-id="<%= xe._id %>" 
+                       data-name="<%= xe.tenXe %> - <%= xe.hangXe %>"
+                       data-price="<%= xe.giaBan %>" 
+                       data-max="<%= xe.soLuongTon %>"
+                       min="0" 
+                       value="0" 
+                       onchange="updateSelectedVehicles()">
+                <button type="button" 
+                        class="btn-remove" 
+                        onclick="resetVehicleQty('<%= xe._id %>')">Xóa</button>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <p style="text-align: center; color: #999;">Không có xe nào khả dụng</p>
+        <% } %>
+      </div>
+
+      <div class="selected-vehicles-list" id="selectedVehicles" style="display: none;">
+        <div class="section-title">✅ Những Xe Đã Chọn</div>
+        <div id="selectedItemsList"></div>
+      </div>
+
+      <div class="total-section">
+        <div class="total-label">Tổng Cộng:</div>
+        <div class="total-value" id="totalPrice">0 đ</div>
+      </div>
+
+      <div class="form-group">
+        <label for="ghiChu">Ghi Chú Đơn Hàng</label>
+        <textarea id="ghiChu" 
+                  name="ghiChu" 
+                  placeholder="Nhập ghi chú hoặc yêu cầu khác..."
+                  style="height: 100px;"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-submit">✔️ Tạo Đơn Hàng</button>
+        <a href="/api/donhang/" class="btn btn-cancel">✕ Hủy</a>
+      </div>
+
+      <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p>Đang xử lý...</p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  let selectedVehicles = {};
+
+  function updateSelectedVehicles() {
+    selectedVehicles = {};
+    const inputs = document.querySelectorAll('.vehicle-qty-input');
+    let totalPrice = 0;
+    let hasSelected = false;
+
+    inputs.forEach(input => {
+      const qty = parseInt(input.value) || 0;
+      if (qty > 0) {
+        hasSelected = true;
+        const id = input.dataset.id;
+        const price = parseInt(input.dataset.price);
+        const max = parseInt(input.dataset.max);
+
+        if (qty > max) {
+          alert(`Số lượng không thể vượt quá ${max}`);
+          input.value = max;
+          qty = max;
+        }
+
+        selectedVehicles[id] = {
+          xe: id,
+          soLuong: qty,
+          giaTaiThoiDiemMua: price * qty,
+          name: input.dataset.name
+        };
+
+        totalPrice += price * qty;
+      }
+    });
+
+    // Update UI
+    const selectedContainer = document.getElementById('selectedVehicles');
+    const selectedList = document.getElementById('selectedItemsList');
+
+    if (hasSelected) {
+      selectedContainer.style.display = 'block';
+      selectedList.innerHTML = '';
+
+      Object.values(selectedVehicles).forEach(vehicle => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'selected-item';
+        itemDiv.innerHTML = `
+          <div class="selected-item-text">
+            ${vehicle.name} x${vehicle.soLuong} = ${new Intl.NumberFormat('vi-VN').format(vehicle.giaTaiThoiDiemMua)} đ
+          </div>
+          <button type="button" class="selected-item-remove" 
+                  onclick="resetVehicleQty('${vehicle.xe}')">✕</button>
+        `;
+        selectedList.appendChild(itemDiv);
+      });
+    } else {
+      selectedContainer.style.display = 'none';
+    }
+
+    document.getElementById('totalPrice').textContent = new Intl.NumberFormat('vi-VN').format(totalPrice) + ' đ';
+  }
+
+  function resetVehicleQty(id) {
+    const input = document.querySelector(`[data-id="${id}"]`);
+    if (input) {
+      input.value = 0;
+      updateSelectedVehicles();
+    }
+  }
+
+  document.getElementById('orderForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const vehicleList = Object.values(selectedVehicles).map(v => ({
+      xe: v.xe,
+      soLuong: v.soLuong,
+      giaTaiThoiDiemMua: v.giaTaiThoiDiemMua / v.soLuong
+    }));
+
+    if (vehicleList.length === 0) {
+      alert('Vui lòng chọn ít nhất một xe');
+      return;
+    }
+
+    const formData = {
+      nguoiDung: '<%= user?._id || "" %>',
+      danhSachXe: vehicleList,
+      tongTien: parseInt(document.getElementById('totalPrice').textContent.replace(/\D/g, '')) || 0,
+      ghiChu: document.getElementById('ghiChu').value
+    };
+
+    document.getElementById('loadingSpinner').style.display = 'block';
+
+    try {
+      const response = await fetch('/api/donhang', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Tạo đơn hàng thành công!');
+        window.location.href = '/api/donhang/';
+      } else {
+        alert('Lỗi: ' + (data.message || 'Không thể tạo đơn hàng'));
+      }
+    } catch (error) {
+      alert('Lỗi: ' + error.message);
+    } finally {
+      document.getElementById('loadingSpinner').style.display = 'none';
+    }
+  });
+</script>
+
+<%- include('../footer') %>

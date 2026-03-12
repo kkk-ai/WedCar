@@ -1,0 +1,468 @@
+<%- include('../header') %>
+
+<style>
+  .order-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 15px;
+  }
+
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .order-header h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .btn-add {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .btn-add:hover {
+    opacity: 0.9;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #f58220;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #f58220;
+  }
+
+  .search-filter {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .search-filter input,
+  .search-filter select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .search-filter input {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .order-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .order-card-header {
+    background: #f8f9fa;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .order-id {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .order-date {
+    font-size: 12px;
+    color: #999;
+  }
+
+  .order-card-body {
+    padding: 15px;
+  }
+
+  .order-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info-label {
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .info-value {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .order-items {
+    border-top: 1px solid #eee;
+    padding: 15px 0;
+    margin: 15px 0;
+  }
+
+  .items-header {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+  }
+
+  .item-name {
+    flex: 1;
+  }
+
+  .item-qty {
+    width: 80px;
+    text-align: center;
+  }
+
+  .item-price {
+    width: 120px;
+    text-align: right;
+    font-weight: bold;
+    color: #f58220;
+  }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    border-top: 2px solid #ddd;
+    color: #f58220;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .status-cho {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .status-dang {
+    background: #cce5ff;
+    color: #004085;
+  }
+
+  .status-hoan {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-huy {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .btn-sm {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .btn-edit {
+    background: #ffc107;
+    color: #333;
+  }
+
+  .btn-edit:hover {
+    background: #ffb300;
+  }
+
+  .btn-delete {
+    background: #dc3545;
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background: #c82333;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+  }
+
+  .empty-state h3 {
+    color: #999;
+    margin-bottom: 10px;
+  }
+
+  .empty-state p {
+    color: #ccc;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .order-card-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .order-info {
+      grid-template-columns: 1fr;
+    }
+
+    .item-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .item-qty,
+    .item-price {
+      width: auto;
+      text-align: left;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .btn-sm {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="order-container">
+  <div class="order-header">
+    <h1>🛒 Quản Lý Đơn Hàng</h1>
+    <% if (user) { %>
+      <a href="/api/donhang/them" class="btn-add">+ Tạo Đơn Hàng</a>
+    <% } %>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Tổng Đơn Hàng</div>
+      <div class="stat-value"><%= donHangList ? donHangList.length : 0 %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Chờ Xác Nhận</div>
+      <div class="stat-value"><%= donHangList ? donHangList.filter(d => d.trangThai === 'ChoXacNhan').length : 0 %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Đang Xử Lý</div>
+      <div class="stat-value"><%= donHangList ? donHangList.filter(d => d.trangThai === 'DangXuLy').length : 0 %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Tổng Doanh Thu</div>
+      <div class="stat-value">
+        <%= donHangList ? new Intl.NumberFormat('vi-VN').format(
+          donHangList.reduce((sum, d) => sum + (d.tongTien || 0), 0)
+        ) : 0 %> đ
+      </div>
+    </div>
+  </div>
+
+  <div class="search-filter">
+    <input type="text" id="searchInput" placeholder="Tìm theo tên khách hàng..." onkeyup="filterOrders()">
+    <select id="statusFilter" onchange="filterOrders()">
+      <option value="">-- Tất Cả Trạng Thái --</option>
+      <option value="ChoXacNhan">Chờ Xác Nhận</option>
+      <option value="DangXuLy">Đang Xử Lý</option>
+      <option value="HoanThanh">Hoàn Thành</option>
+      <option value="DaHuy">Bị Hủy</option>
+    </select>
+  </div>
+
+  <% if (donHangList && donHangList.length > 0) { %>
+    <% donHangList.forEach(donHang => { %>
+      <div class="order-card order-item" style="display: block;">
+        <div class="order-card-header">
+          <div>
+            <div class="order-id">Đơn #<%= donHang._id.toString().slice(-8).toUpperCase() %></div>
+            <div class="order-date"><%= new Date(donHang.ngayDat).toLocaleDateString('vi-VN') %></div>
+          </div>
+          <span class="status-badge <%= donHang.trangThai === 'ChoXacNhan' ? 'status-cho' : donHang.trangThai === 'DangXuLy' ? 'status-dang' : donHang.trangThai === 'HoanThanh' ? 'status-hoan' : 'status-huy' %>">
+            <%= donHang.trangThai === 'ChoXacNhan' ? 'Chờ Xác Nhận' : donHang.trangThai === 'DangXuLy' ? 'Đang Xử Lý' : donHang.trangThai === 'HoanThanh' ? 'Hoàn Thành' : 'Bị Hủy' %>
+          </span>
+        </div>
+
+        <div class="order-card-body" style="display: none;" id="details-<%= donHang._id %>">
+          <div class="order-info">
+            <div class="info-item">
+              <div class="info-label">Khách Hàng</div>
+              <div class="info-value"><%= donHang.nguoiDung?.hoTen || 'N/A' %></div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Email</div>
+              <div class="info-value"><%= donHang.nguoiDung?.email || 'N/A' %></div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Số Lượng Xe</div>
+              <div class="info-value"><%= donHang.danhSachXe?.length || 0 %> xe</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Tổng Tiền</div>
+              <div class="info-value"><%= new Intl.NumberFormat('vi-VN').format(donHang.tongTien || 0) %> đ</div>
+            </div>
+          </div>
+
+          <div class="order-items">
+            <div class="items-header">📦 Danh Sách Xe:</div>
+            <% if (donHang.danhSachXe && donHang.danhSachXe.length > 0) { %>
+              <% donHang.danhSachXe.forEach(item => { %>
+                <div class="item-row">
+                  <div class="item-name"><%= item.xe?.tenXe || 'Xe không xác định' %></div>
+                  <div class="item-qty">x<%= item.soLuong || 1 %></div>
+                  <div class="item-price"><%= new Intl.NumberFormat('vi-VN').format(item.giaTaiThoiDiemMua || 0) %> đ</div>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <div class="item-row">Không có sản phẩm</div>
+            <% } %>
+          </div>
+
+          <div class="action-buttons">
+            <a href="/api/donhang/sua/<%= donHang._id %>" class="btn-sm btn-edit">✏️ Sửa</a>
+            <button class="btn-sm btn-delete" onclick="deleteOrder('<%= donHang._id %>')">🗑️ Xóa</button>
+          </div>
+        </div>
+
+        <div style="text-align: center; padding: 10px; cursor: pointer;" onclick="toggleDetails('<%= donHang._id %>')">
+          <span id="toggle-<%= donHang._id %>">👉 Chi Tiết</span>
+        </div>
+      </div>
+    <% }); %>
+  <% } else { %>
+    <div class="empty-state">
+      <div class="empty-icon">🛍️</div>
+      <h3>Chưa có đơn hàng nào</h3>
+      <p>Hãy tạo đơn hàng đầu tiên của bạn</p>
+      <% if (user) { %>
+        <a href="/api/donhang/them" class="btn-add">+ Tạo Đơn Hàng</a>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<script>
+  function toggleDetails(id) {
+    const details = document.getElementById('details-' + id);
+    const toggle = document.getElementById('toggle-' + id);
+    
+    if (details.style.display === 'none') {
+      details.style.display = 'block';
+      toggle.textContent = '👇 Ẩn Chi Tiết';
+    } else {
+      details.style.display = 'none';
+      toggle.textContent = '👉 Chi Tiết';
+    }
+  }
+
+  function filterOrders() {
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value;
+    const orderItems = document.querySelectorAll('.order-item');
+
+    orderItems.forEach(item => {
+      const customerName = item.textContent.toLowerCase();
+      const statusBadge = item.querySelector('.status-badge').textContent.trim();
+
+      const statusMatch = statusFilter === '' || statusBadge.includes(
+        statusFilter === 'ChoXacNhan' ? 'Chờ Xác Nhận' :
+        statusFilter === 'DangXuLy' ? 'Đang Xử Lý' :
+        statusFilter === 'HoanThanh' ? 'Hoàn Thành' :
+        'Bị Hủy'
+      );
+
+      const textMatch = customerName.includes(searchText);
+
+      item.style.display = (textMatch && statusMatch) ? 'block' : 'none';
+    });
+  }
+
+  function deleteOrder(id) {
+    if (confirm('Bạn chắc chắn muốn xóa đơn hàng này?')) {
+      fetch(`/api/donhang/${id}`, {
+        method: 'DELETE'
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message || 'Xóa thành công');
+        location.reload();
+      })
+      .catch(error => alert('Lỗi: ' + error.message));
+    }
+  }
+</script>
+
+<%- include('../footer') %>

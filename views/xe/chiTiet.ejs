@@ -1,0 +1,108 @@
+<%- include('../header.ejs') %>
+
+<style>
+  .detail-container {
+    max-width: 1000px;
+    margin: 30px auto;
+  }
+  .image-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .image-gallery img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+  }
+  .main-image img {
+    width: 100%;
+    border-radius: 10px;
+    height: 350px;
+    object-fit: cover;
+  }
+  .info-card {
+    margin-top: 20px;
+  }
+  .info-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .info-box {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+  .info-box h4 {
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .btn-group-action {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+  }
+</style>
+
+<div class="detail-container">
+  
+  <a class="btn btn-link mb-3" href="/">← Quay về</a>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="main-image">
+        <img src="<%= xe.hinhAnh && xe.hinhAnh.length ? (/(^https?:\/\/|^\/)/i.test(xe.hinhAnh[0]) ? xe.hinhAnh[0] : '/images/' + xe.hinhAnh[0]) : 'https://via.placeholder.com/800x450?text=No+Image' %>" alt="<%= xe.tenXe %>">
+      </div>
+      <div class="image-gallery">
+        <% (xe.hinhAnh || []).forEach(item => { %>
+          <img src="<%= /(^https?:\/\/|^\/)/i.test(item) ? item : '/images/' + item %>" alt="Xe">
+        <% }) %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <h2><%= xe.tenXe %></h2>
+      <p class="text-muted">Hãng: <strong><%= xe.hangXe %></strong> | Loại: <strong><%= xe.loaiXe %></strong></p>
+      <h3 class="text-danger fw-bold"><%= new Intl.NumberFormat('vi-VN').format(xe.giaBan) %> đ</h3>
+      <p><span class="badge bg-info text-dark">Năm SX: <%= xe.namSanXuat || 'N/A' %></span></p>
+
+      <div class="btn-group-action">
+        <button class="btn btn-success" onclick="buyNow('<%= xe._id %>')">Mua ngay</button>
+        <button class="btn btn-primary" onclick="bookTestDrive('<%= xe._id %>')">Đặt lịch xem</button>
+      </div>
+
+      <div class="info-card">
+        <div class="info-row">
+          <div class="info-box">
+            <h4>Thông số cơ bản</h4>
+            <p>Nhiên liệu: <strong><%= xe.nhienLieu || '-' %></strong></p>
+            <p>Hộp số: <strong><%= xe.hopSo || '-' %></strong></p>
+            <p>Màu sắc: <strong><%= xe.mauSac || '-' %></strong></p>
+            <p>Số lượng tồn: <strong><%= xe.soLuongTon %></strong></p>
+            <p>Xe nổi bật: <strong><%= xe.noiBat ? 'Có' : 'Không' %></strong></p>
+          </div>
+          <div class="info-box">
+            <h4>Mô tả</h4>
+            <p style="white-space: pre-line;"><%= xe.moTa || 'Không có mô tả' %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function buyNow(id) {
+    window.location.href = '/auth/dang-nhap';
+  }
+  function bookTestDrive(id) {
+    window.location.href = '/api/lichhen/them?xe=' + id;
+  }
+</script>
+
+<%- include('../footer.ejs') %>

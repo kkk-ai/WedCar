@@ -1,0 +1,168 @@
+<%- include('header') %>
+<body>
+  <%- include('navbar') %>
+
+  <div class="container mt-4 mb-5">
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Xin chào, <%= user?.hoTen || 'Khách hàng' %></h5>
+            <p class="card-text"><strong>Email:</strong> <%= user?.email || '-' %></p>
+            <p class="card-text"><strong>Điện thoại:</strong> <%= user?.soDienThoai || '-' %></p>
+            <p class="card-text"><strong>Quyền:</strong> <%= user?.quyenHan === 'quanTri' ? 'Quản trị' : 'Khách hàng' %></p>
+          </div>
+        </div>
+
+        <div class="list-group">
+          <a href="/khachhang" class="list-group-item list-group-item-action active">Tổng quan</a>
+          <a href="/api/lichhen" class="list-group-item list-group-item-action">Lịch hẹn của tôi</a>
+          <a href="/api/donhang" class="list-group-item list-group-item-action">Đơn hàng của tôi</a>
+          <a href="/taikhoan/hoso" class="list-group-item list-group-item-action">Hồ sơ cá nhân</a>
+          <a href="/auth/dang-xuat" class="list-group-item list-group-item-action">Đăng xuất</a>
+        </div>
+      </div>
+
+      <div class="col-lg-9">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Bảng điều khiển khách hàng</h3>
+            <p class="text-muted">Xem thông tin nhanh về hoạt động, đơn hàng và lịch hẹn.</p>
+
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="card bg-light h-100">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Tổng đơn hàng</h6>
+                    <h4 id="customerOrders" class="card-title">--</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card bg-light h-100">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Lịch hẹn chờ</h6>
+                    <h4 id="pendingAppointments" class="card-title">--</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card bg-light h-100">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Xe yêu thích</h6>
+                    <h4 id="favoriteCars" class="card-title">0</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <h5>Thông tin mua xe</h5>
+              <% if (selectedCar) { %>
+                <div class="card mb-3 border-success">
+                  <div class="row g-0">
+                    <div class="col-md-4">
+                      <img src="<%= selectedCar.hinhAnh?.[0] || '/images/no-car.jpg' %>" class="img-fluid rounded-start" alt="<%= selectedCar.tenXe %>">
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <h5 class="card-title"><%= selectedCar.tenXe %> (<%= selectedCar.hangXe %>)</h5>
+                        <p class="card-text"><strong>Giá:</strong> <%= new Intl.NumberFormat('vi-VN').format(selectedCar.giaBan) %> đ</p>
+                        <p class="card-text"><strong>Nhien liệu:</strong> <%= selectedCar.nhienLieu || '-' %></p>
+                        <p class="card-text"><strong>Hộp số:</strong> <%= selectedCar.hopSo || '-' %></p>
+                        <button id="payNowBtn" type="button" class="btn btn-primary">Thanh toán</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% } else { %>
+                <p class="text-muted">Chưa chọn xe để mua. Trở về trang chủ để chọn xe.</p>
+              <% } %>
+
+              <h5>Hướng dẫn:</h5>
+              <ul>
+                <li>Vào mục "Lịch hẹn của tôi" để điều chỉnh trạng thái hoặc hủy đặt hẹn.</li>
+                <li>Vào mục "Đơn hàng của tôi" để xem chi tiết đơn, trạng thái thanh toán.</li>
+                <li>Vào "Hồ sơ cá nhân" để cập nhật thông tin.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('footer') %>
+  <%- include('javascript') %>
+
+  <script>
+    async function fetchData() {
+      try {
+        const [orderRes, aptRes] = await Promise.all([
+          fetch('/api/donhang/api/list'),
+          fetch('/api/lichhen/api/list')
+        ]);
+
+        const orders = await orderRes.json();
+        const appointments = await aptRes.json();
+
+        const userId = '<%= user?.id %>';
+        const myOrders = orders.filter(o => o.nguoiDung && o.nguoiDung._id === userId);
+        const myAppointments = appointments.filter(a => a.nguoiDung && a.nguoiDung._id === userId);
+
+        document.getElementById('customerOrders').innerText = myOrders.length;
+        document.getElementById('pendingAppointments').innerText = myAppointments.filter(a => a.trangThai === 'ChoXacNhan').length;
+      } catch (err) {
+        console.error('Không thể tải dữ liệu khách hàng', err);
+      }
+    }
+
+    async function payNow() {
+      const selectedCar = <%- JSON.stringify(selectedCar || null) %>;
+      if (!selectedCar) {
+        alert('Không có xe để thanh toán.');
+        return;
+      }
+
+      try {
+        // 1. Tạo đơn hàng, trừ kho và tạo link momo
+        const momoRes = await fetch('/api/momo/checkout', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ xeId: selectedCar._id })
+        });
+
+        if (momoRes.status === 401) {
+          window.location.href = '/auth/dang-nhap';
+          return;
+        }
+
+        const momoData = await momoRes.json();
+        console.log('[payNow] momoData', momoData);
+
+        if (!momoRes.ok) {
+          alert('Thanh toán thất bại: ' + (momoData.message || 'Không xác định'));
+          return;
+        }
+
+        if (momoData.payUrl) {
+          window.location.href = momoData.payUrl;
+        } else {
+          alert('Không lấy được liên kết Momo.');
+        }
+      } catch (err) {
+        alert('Lỗi mạng: ' + err.message);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      fetchData();
+      const btn = document.getElementById('payNowBtn');
+      if (btn) {
+        btn.addEventListener('click', payNow);
+      }
+    });
+  </script>
+</body>
+</html>

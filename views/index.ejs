@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <%- include('header') %>
+  <style>
+    .brand-item { cursor: pointer; transition: transform 0.2s; min-width: 80px; }
+    .brand-item:hover { transform: translateY(-5px); }
+    .brand-item img { object-fit: contain; filter: grayscale(20%); }
+    .brand-item:hover img { filter: grayscale(0%); }
+    .hero-search-box { background: white; border-radius: 15px; margin-top: -50px; position: relative; z-index: 10; }
+    .badge-region { cursor: pointer; transition: all 0.2s; }
+    .badge-region:hover { background-color: #ffc107 !important; color: #000 !important; }
+  </style>
+</head>
+<body>
+  <div class="container-fluid p-0">
+    <%- include('navbar') %>
+
+    <section class="hero py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+      <div class="container">
+        <div class="text-center mb-4">
+          <h2 class="fw-bold text-uppercase">Tìm kiếm chiếc xe mơ ước của bạn</h2>
+          <p class="text-muted">Hơn 100+ mẫu xe đang chờ bạn khám phá</p>
+        </div>
+
+        <div class="bg-white rounded-4 border shadow-sm p-4 hero-search-box">
+          <div class="d-flex flex-wrap justify-content-center gap-4 pb-4 border-bottom mb-4">
+            <% const brands = [
+              { name: 'Toyota', img: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Toyota_logo.png' },
+              { name: 'Ford', img: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Ford_logo_flat.svg' },
+              { name: 'Kia', img: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Kia_logo.svg' },
+              { name: 'Hyundai', img: 'https://upload.wikimedia.org/wikipedia/commons/3/37/Hyundai_logo.svg' },
+              { name: 'Mitsubishi', img: 'https://upload.wikimedia.org/wikipedia/commons/8/8f/Mitsubishi-logo.png' },
+              { name: 'VinFast', img: 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Vinfast_logo.svg' },
+              { name: 'Mazda', img: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Mazda_logo.png' },
+              { name: 'Honda', img: 'https://upload.wikimedia.org/wikipedia/commons/7/7a/Honda_logo.svg' }
+            ] %>
+            <% brands.forEach(brand => { %>
+              <div class="text-center brand-item" onclick="setBrandFilter('<%= brand.name %>')">
+                <img src="<%= brand.img %>" alt="<%= brand.name %>" style="height: 35px; width: auto;" />
+                <div class="small mt-1 fw-bold text-secondary"><%= brand.name %></div>
+              </div>
+            <% }) %>
+          </div>
+
+          <form id="searchForm" class="row g-3">
+            <div class="col-md-10">
+              <div class="row g-2">
+                <div class="col-md-4">
+                  <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input class="form-control border-start-0" type="text" id="searchInput" placeholder="Tên xe, dòng xe..." onkeyup="filterCars()" />
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <select id="priceRange" class="form-select" onchange="filterCars()">
+                    <option value="">Chọn giá</option>
+                    <option value="0-500000000">Dưới 500 triệu</option>
+                    <option value="500000000-1000000000">500M - 1 Tỷ</option>
+                    <option value="1000000000-9999999999">Trên 1 Tỷ</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <select id="brandFilter" class="form-select" onchange="filterCars()">
+                    <option value="">Tất cả hãng</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Ford">Ford</option>
+                    <option value="VinFast">VinFast</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <select id="fuelFilter" class="form-select" onchange="filterCars()">
+                    <option value="">Nhiên liệu</option>
+                    <option value="Xang">Xăng</option>
+                    <option value="Dau">Dầu</option>
+                    <option value="Dien">Điện</option>
+                    <option value="Hybrid">Hybrid</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <select id="transmissionFilter" class="form-select" onchange="filterCars()">
+                    <option value="">Hộp số</option>
+                    <option value="SoSan">Số sàn</option>
+                    <option value="SoTuDong">Số tự động</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button type="button" class="btn btn-warning w-100 fw-bold" onclick="filterCars()">TÌM KIẾM</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="container my-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold m-0 border-start border-4 border-warning ps-3">DANH SÁCH XE</h4>
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">Sắp xếp</button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#" onclick="sortCars('low')">Giá: Thấp đến Cao</a></li>
+            <li><a class="dropdown-item" href="#" onclick="sortCars('high')">Giá: Cao đến Thấp</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div id="resultCards" class="row g-4"></div>
+      <div class="d-flex justify-content-center mt-4" id="pagination"></div>
+    </section>
+
+    <%- include('footer') %>
+  </div>
+
+  <%- include('javascript') %>
+
+  <script>
+    const xeList = <%- JSON.stringify(xeList || []) %>;
+    const userLoggedIn = <%- JSON.stringify(!!user) %>;
+    let activePage = 1;
+    const itemsPerPage = 6;
+    let filteredData = [...xeList];
+
+    function renderCars() {
+      const container = document.getElementById('resultCards');
+      container.innerHTML = '';
+      
+      const start = (activePage - 1) * itemsPerPage;
+      const pageItems = filteredData.slice(start, start + itemsPerPage);
+
+      if (pageItems.length === 0) {
+        container.innerHTML = '<div class="col-12 text-center py-5">Không tìm thấy xe phù hợp</div>';
+        return;
+      }
+
+      pageItems.forEach(xe => {
+        const rawImage = xe.hinhAnh?.[0] || '';
+        const imageSrc = rawImage
+          ? /(^https?:\/\/|^\/)/i.test(rawImage)
+            ? rawImage
+            : '/images/' + rawImage.replace(/^\/+/, '')
+          : '/images/no-car.jpg';
+
+        container.innerHTML += `
+          <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 car-detail-card" style="cursor:pointer;" onclick="window.location.href='/api/xe/chi-tiet/${xe._id}'">
+              <img src="${imageSrc}" class="card-img-top" style="height:200px; object-fit:cover;">
+              <div class="card-body">
+                <h6 class="text-primary fw-bold text-uppercase small">${xe.hangXe}</h6>
+                <h5 class="fw-bold">${xe.tenXe}</h5>
+                <p class="text-danger fw-bold fs-5">${new Intl.NumberFormat('vi-VN').format(xe.giaBan)} đ</p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <span class="badge bg-light text-dark">${xe.namSanXuat || 2024}</span>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-success btn-sm" onclick="event.stopPropagation(); buyNow('${xe._id}')">Mua ngay</button>
+                    <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); bookTestDrive('${xe._id}')">Đặt lịch xem</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const paginContainer = document.getElementById('pagination');
+      const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+      paginContainer.innerHTML = '';
+
+      for(let i=1; i<=totalPages; i++) {
+        paginContainer.innerHTML += `
+          <button class="btn btn-sm ${i === activePage ? 'btn-warning' : 'btn-outline-secondary'} mx-1" 
+                  onclick="changePage(${i})">${i}</button>
+        `;
+      }
+    }
+
+    function changePage(page) {
+      activePage = page;
+      renderCars();
+    }
+
+    function filterCars() {
+      const s = document.getElementById('searchInput').value.toLowerCase();
+      const b = document.getElementById('brandFilter').value;
+      const p = document.getElementById('priceRange').value;
+      const f = document.getElementById('fuelFilter').value;
+      const t = document.getElementById('transmissionFilter').value;
+      
+
+      filteredData = xeList.filter(item => {
+        const matchSearch = item.tenXe.toLowerCase().includes(s);
+        const matchBrand = b === "" || item.hangXe === b;
+        const matchFuel = f === "" || item.loaiNhienLieu === f;
+        const matchTrans = t === "" || item.hopSo === t;
+
+        let matchPrice = true;
+        if(p) {
+          const [min, max] = p.split('-').map(Number);
+          matchPrice = item.giaBan >= min && item.giaBan <= max;
+        }
+        return matchSearch && matchBrand && matchFuel && matchTrans && matchPrice;
+      });
+
+      activePage = 1;
+      renderCars();
+    }
+
+    function sortCars(type) {
+        if(type === 'low') filteredData.sort((a,b) => a.giaBan - b.giaBan);
+        else filteredData.sort((a,b) => b.giaBan - a.giaBan);
+        renderCars();
+    }
+
+    function setBrandFilter(name) {
+      document.getElementById('brandFilter').value = name;
+      filterCars();
+    }
+
+    function buyNow(id) {
+      if (!userLoggedIn) {
+        window.location.href = '/auth/dang-nhap';
+        return;
+      }
+      window.location.href = '/khachhang?xe=' + id;
+    }
+
+    function bookTestDrive(id) {
+      if (!userLoggedIn) {
+        window.location.href = '/auth/dang-nhap';
+        return;
+      }
+      window.location.href = '/api/lichhen/them?xe=' + id;
+    }
+
+    document.addEventListener('DOMContentLoaded', renderCars);
+  </script>
+</body>
+</html>

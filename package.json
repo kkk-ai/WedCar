@@ -1,0 +1,20 @@
+{
+  "name": "wedcar",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Thanh Nam",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "ejs": "^4.0.1",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mongoose": "^9.2.4",
+    "nodemon": "^3.1.14"
+  }
+}

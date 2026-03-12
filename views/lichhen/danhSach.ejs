@@ -1,0 +1,345 @@
+<%- include('../header') %>
+
+<style>
+  .appointment-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 15px;
+  }
+
+  .appointment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .appointment-header h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .btn-add {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .btn-add:hover {
+    opacity: 0.9;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #f58220;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #f58220;
+  }
+
+  .search-filter {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .search-filter input,
+  .search-filter select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  .search-filter input {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .appointment-table {
+    width: 100%;
+    background: white;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .appointment-table thead {
+    background: #f8f9fa;
+    font-weight: bold;
+  }
+
+  .appointment-table th {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+  }
+
+  .appointment-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .appointment-table tr:hover {
+    background: #f5f5f5;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .status-cho {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .status-xac {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+
+  .status-da {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-huy {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-sm {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .btn-edit {
+    background: #ffc107;
+    color: #333;
+  }
+
+  .btn-edit:hover {
+    background: #ffb300;
+  }
+
+  .btn-delete {
+    background: #dc3545;
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background: #c82333;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+  }
+
+  .empty-state h3 {
+    color: #999;
+    margin-bottom: 10px;
+  }
+
+  .empty-state p {
+    color: #ccc;
+    margin-bottom: 20px;
+  }
+
+  .appointment-time {
+    font-weight: bold;
+    color: #f58220;
+  }
+
+  @media (max-width: 768px) {
+    .appointment-table {
+      font-size: 12px;
+    }
+
+    .appointment-table th,
+    .appointment-table td {
+      padding: 10px;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .btn-sm {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="appointment-container">
+  <div class="appointment-header">
+    <h1>📅 Quản Lý Lịch Hẹn</h1>
+    <% if (user) { %>
+      <a href="/api/lichhen/them" class="btn-add">+ Thêm Lịch Hẹn</a>
+    <% } %>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Tổng Lịch Hẹn</div>
+      <div class="stat-value"><%= lichHenList ? lichHenList.length : 0 %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Chờ Xác Nhận</div>
+      <div class="stat-value"><%= lichHenList ? lichHenList.filter(l => l.trangThai === 'ChoXacNhan').length : 0 %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Đã Xác Nhận</div>
+      <div class="stat-value"><%= lichHenList ? lichHenList.filter(l => l.trangThai === 'DaXacNhan').length : 0 %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Đã Hoàn Thành</div>
+      <div class="stat-value"><%= lichHenList ? lichHenList.filter(l => l.trangThai === 'DaDen').length : 0 %></div>
+    </div>
+  </div>
+
+  <div class="search-filter">
+    <input type="text" id="searchInput" placeholder="Tìm theo tên khách hàng hoặc xe...">
+    <select id="statusFilter">
+      <option value="">-- Tất Cả Trạng Thái --</option>
+      <option value="ChoXacNhan">Chờ Xác Nhận</option>
+      <option value="DaXacNhan">Đã Xác Nhận</option>
+      <option value="DaDen">Đã Đến</option>
+      <option value="DaHuy">Bị Hủy</option>
+    </select>
+  </div>
+
+  <% if (lichHenList && lichHenList.length > 0) { %>
+    <table class="appointment-table">
+      <thead>
+        <tr>
+          <th>Khách Hàng</th>
+          <th>Xe</th>
+          <th>Ngày Hẹn</th>
+          <th>Giờ Hẹn</th>
+          <th>Cửa Hàng</th>
+          <th>Trạng Thái</th>
+          <th>Thao Tác</th>
+        </tr>
+      </thead>
+      <tbody id="appointmentTable">
+        <% lichHenList.forEach(lich => { %>
+          <tr class="appointment-row">
+            <td><%= lich.nguoiDung?.hoTen || 'N/A' %></td>
+            <td><%= lich.xe?.tenXe || 'N/A' %></td>
+            <td><%= new Date(lich.ngayHen).toLocaleDateString('vi-VN') %></td>
+            <td class="appointment-time"><%= lich.gioHen %></td>
+            <td><%= lich.cuaHang?.tenCuaHang || 'N/A' %></td>
+            <td>
+              <span class="status-badge <%= lich.trangThai === 'ChoXacNhan' ? 'status-cho' : lich.trangThai === 'DaXacNhan' ? 'status-xac' : lich.trangThai === 'DaDen' ? 'status-da' : 'status-huy' %>">
+                <%= lich.trangThai === 'ChoXacNhan' ? 'Chờ Xác Nhận' : lich.trangThai === 'DaXacNhan' ? 'Đã Xác Nhận' : lich.trangThai === 'DaDen' ? 'Đã Đến' : 'Bị Hủy' %>
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <a href="/api/lichhen/sua/<%= lich._id %>" class="btn-sm btn-edit">✏️ Sửa</a>
+                <button class="btn-sm btn-delete" onclick="deleteAppointment('<%= lich._id %>')">🗑️ Xóa</button>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <h3>Chưa có lịch hẹn nào</h3>
+      <p>Hãy thêm lịch hẹn đầu tiên của bạn</p>
+      <% if (user) { %>
+        <a href="/api/lichhen/them" class="btn-add">+ Thêm Lịch Hẹn</a>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<script>
+  function deleteAppointment(id) {
+    if (confirm('Bạn chắc chắn muốn xóa lịch hẹn này?')) {
+      fetch(`/api/lichhen/${id}`, {
+        method: 'DELETE'
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message || 'Xóa thành công');
+        location.reload();
+      })
+      .catch(error => alert('Lỗi: ' + error.message));
+    }
+  }
+
+  function filterAppointments() {
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value;
+    const rows = document.querySelectorAll('.appointment-row');
+
+    rows.forEach(row => {
+      const customerName = row.cells[0].textContent.toLowerCase();
+      const vehicleName = row.cells[1].textContent.toLowerCase();
+      const status = row.cells[5].textContent.trim();
+
+      const textMatch = customerName.includes(searchText) || vehicleName.includes(searchText);
+      const statusMatch = statusFilter === '' || status.includes(statusFilter);
+
+      row.style.display = textMatch && statusMatch ? '' : 'none';
+    });
+  }
+
+  document.getElementById('searchInput').addEventListener('keyup', filterAppointments);
+  document.getElementById('statusFilter').addEventListener('change', filterAppointments);
+</script>
+
+<%- include('../footer') %>

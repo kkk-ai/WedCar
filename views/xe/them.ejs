@@ -1,0 +1,314 @@
+<%- include('../header.ejs') %>
+
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 30px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .form-row.full {
+        grid-template-columns: 1fr;
+    }
+    .form-row.three-col {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #f58220;
+        box-shadow: 0 0 5px rgba(245, 130, 32, 0.3);
+    }
+    .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+    .form-group.checkbox {
+        display: flex;
+        align-items: center;
+    }
+    .form-group.checkbox input {
+        width: auto;
+        margin-right: 8px;
+    }
+    .form-group.checkbox label {
+        margin-bottom: 0;
+    }
+    .button-group {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    .btn-submit {
+        background-color: #f58220;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .btn-submit:hover {
+        background-color: #e67616;
+    }
+    .btn-cancel {
+        background-color: #ccc;
+        color: #333;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-cancel:hover {
+        background-color: #bbb;
+    }
+    .error-message {
+        color: #d32f2f;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .info-text {
+        font-size: 12px;
+        color: #999;
+        margin-top: 3px;
+    }
+</style>
+
+<div class="container">
+    <div class="form-container">
+        <h1 class="form-title">🚗 Thêm Xe Mới</h1>
+
+        <form id="formThemXe">
+            <!-- Thông tin cơ bản -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tenXe">Tên Xe: <span style="color: red;">*</span></label>
+                    <input type="text" id="tenXe" name="tenXe" required placeholder="VD: Toyota Camry 2024">
+                    <div class="error-message" id="errorTenXe"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="hangXe">Hãng Xe: <span style="color: red;">*</span></label>
+                    <input type="text" id="hangXe" name="hangXe" required placeholder="VD: Toyota, Honda, BMW...">
+                    <div class="error-message" id="errorHangXe"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="loaiXe">Loại Xe: <span style="color: red;">*</span></label>
+                    <select id="loaiXe" name="loaiXe" required>
+                        <option value="">-- Chọn loại xe --</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Hatchback">Hatchback</option>
+                        <option value="Bán tải">Bán tải</option>
+                        <option value="MPV">MPV</option>
+                        <option value="Coupe">Coupe</option>
+                    </select>
+                    <div class="error-message" id="errorLoaiXe"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="giaBan">Giá Bán (VNĐ): <span style="color: red;">*</span></label>
+                    <input type="number" id="giaBan" name="giaBan" required placeholder="VD: 500000000" min="0">
+                    <div class="error-message" id="errorGiaBan"></div>
+                </div>
+            </div>
+
+            <!-- Thông tin kỹ thuật -->
+            <div class="form-row three-col">
+                <div class="form-group">
+                    <label for="namSanXuat">Năm Sản Xuất:</label>
+                    <input type="number" id="namSanXuat" name="namSanXuat" placeholder="VD: 2024" min="2000" max="2030">
+                </div>
+
+                <div class="form-group">
+                    <label for="nhienLieu">Nhiên Liệu:</label>
+                    <select id="nhienLieu" name="nhienLieu">
+                        <option value="">-- Chọn loại --</option>
+                        <option value="Xang">Xăng</option>
+                        <option value="Dau">Dầu</option>
+                        <option value="Dien">Điện</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="hopSo">Hộp Số:</label>
+                    <select id="hopSo" name="hopSo">
+                        <option value="">-- Chọn loại --</option>
+                        <option value="SoSan">Số Sàn</option>
+                        <option value="SoTuDong">Số Tự Động</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="mauSac">Màu Sắc:</label>
+                    <input type="text" id="mauSac" name="mauSac" placeholder="VD: Đen, Trắng, Bạc, Đỏ...">
+                </div>
+
+                <div class="form-group">
+                    <label for="soLuongTon">Số Lượng Tồn:</label>
+                    <input type="number" id="soLuongTon" name="soLuongTon" placeholder="VD: 5" min="1" value="1">
+                </div>
+            </div>
+
+            <!-- Mô tả -->
+            <div class="form-row full">
+                <div class="form-group">
+                    <label for="moTa">Mô Tả:</label>
+                    <textarea id="moTa" name="moTa" placeholder="Nhập mô tả chi tiết về xe..." rows="4"></textarea>
+                </div>
+            </div>
+
+            <!-- Hình ảnh -->
+            <div class="form-row full">
+                <div class="form-group">
+                    <label for="hinhAnh">Hình Ảnh (URL, cách nhau bằng dấu phẩy):</label>
+                    <textarea id="hinhAnh" name="hinhAnh" placeholder="VD: 1.png, 2.png hoặc https://...." rows="3"></textarea>
+                    <p class="info-text">💡 Nhập mảng ảnh (URL/filename) cách nhau bằng dấu phẩy (,) hoặc gửi mảng qua API.</p>
+                </div>
+            </div>
+
+            <!-- Nổi bật -->
+            <div class="form-row">
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="noiBat" name="noiBat" value="true">
+                    <label for="noiBat">⭐ Xe Nổi Bật (hiển thị ở trang chủ)</label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-submit">✅ Thêm Xe</button>
+                <a href="/api/xe" class="btn-cancel">❌ Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('formThemXe').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Clear error messages
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+        const tenXe = document.getElementById('tenXe').value.trim();
+        const hangXe = document.getElementById('hangXe').value.trim();
+        const loaiXe = document.getElementById('loaiXe').value;
+        const giaBan = document.getElementById('giaBan').value;
+        const namSanXuat = document.getElementById('namSanXuat').value;
+        const nhienLieu = document.getElementById('nhienLieu').value;
+        const hopSo = document.getElementById('hopSo').value;
+        const mauSac = document.getElementById('mauSac').value.trim();
+        const moTa = document.getElementById('moTa').value.trim();
+        const soLuongTon = document.getElementById('soLuongTon').value;
+        const noiBat = document.getElementById('noiBat').checked;
+        
+        // Parse images
+        const hinhAnhText = document.getElementById('hinhAnh').value.trim();
+        const hinhAnh = hinhAnhText ? hinhAnhText.split(',').map(h => h.trim()).filter(h => h) : [];
+
+        // Validation
+        let hasError = false;
+        if (!tenXe) {
+            document.getElementById('errorTenXe').textContent = 'Vui lòng nhập tên xe';
+            hasError = true;
+        }
+        if (!hangXe) {
+            document.getElementById('errorHangXe').textContent = 'Vui lòng nhập hãng xe';
+            hasError = true;
+        }
+        if (!loaiXe) {
+            document.getElementById('errorLoaiXe').textContent = 'Vui lòng chọn loại xe';
+            hasError = true;
+        }
+        if (!giaBan || giaBan <= 0) {
+            document.getElementById('errorGiaBan').textContent = 'Vui lòng nhập giá bán hợp lệ';
+            hasError = true;
+        }
+
+        if (hasError) return;
+
+        try {
+            const response = await fetch('/api/xe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    tenXe,
+                    hangXe,
+                    loaiXe,
+                    giaBan: Number(giaBan),
+                    namSanXuat: namSanXuat ? Number(namSanXuat) : undefined,
+                    nhienLieu: nhienLieu || undefined,
+                    hopSo: hopSo || undefined,
+                    mauSac,
+                    moTa,
+                    hinhAnh,
+                    soLuongTon: Number(soLuongTon) || 1,
+                    noiBat
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('✅ Thêm xe thành công!');
+                window.location.href = '/api/xe';
+            } else {
+                alert('❌ Lỗi: ' + data.message);
+            }
+        } catch (error) {
+            alert('❌ Lỗi khi thêm xe: ' + error.message);
+        }
+    });
+</script>
+
+<%- include('../footer.ejs') %>

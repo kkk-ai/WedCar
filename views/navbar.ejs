@@ -1,0 +1,138 @@
+<style>
+    .navbar-carmudi {
+        background-color: white !important;
+        border-bottom: 1px solid #eee;
+        padding: 10px 0;
+    }
+    .navbar-brand img {
+        height: 40px;
+    }
+    .nav-link {
+        color: #333 !important;
+        font-weight: 500;
+        margin-right: 15px;
+    }
+    .btn-dang-tin {
+        background-color: #f58220 !important; /* Màu cam đặc trưng */
+        color: white !important;
+        font-weight: bold;
+        border-radius: 5px;
+        padding: 8px 20px !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-dang-tin:hover {
+        background-color: #e67616 !important;
+    }
+    .contact-info {
+        font-size: 14px;
+        color: #333;
+        text-decoration: none;
+        margin: 0 15px;
+    }
+</style>
+
+<script>
+function dangXuat() {
+    if (confirm('Bạn chắc chắn muốn đăng xuất?')) {
+        fetch('/auth/dang-xuat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('✅ Đăng xuất thành công');
+            window.location.href = '/';
+        })
+        .catch(error => {
+            alert('❌ Lỗi khi đăng xuất: ' + error.message);
+        });
+    }
+}
+</script>
+
+<nav class="navbar navbar-expand-lg navbar-carmudi">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <img src="https://static.carmudi.vn/wp-content/uploads/2021/03/logo-carmudi.png" alt="Carmudi Logo">
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Mua xe</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ban-xe">Bán xe</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/gioi-thieu">Giới thiệu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tin-tuc">Tin tức</a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <a href="/baiviet/them" class="btn btn-dang-tin me-3">
+                    <i class="bi bi-car-front-fill"></i> ĐĂNG TIN
+                </a>
+
+                <a href="tel:0938119439" class="contact-info d-none d-xl-block">
+                    <i class="bi bi-telephone"></i> 0938119439
+                </a>
+
+                <ul class="navbar-nav me-3">
+                    <% if (user && user.quyenHan === 'quanTri') { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/api/lichhen">📅 Lịch hẹn</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/api/donhang">🧾 Đơn hàng</a>
+                        </li>
+                    <% } %>
+                </ul>
+                <ul class="navbar-nav">
+                    <% if (user) { %>
+                        <!-- Người dùng đã đăng nhập -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> <%= user.hoTen %>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/taikhoan/hoso">👤 Hồ sơ cá nhân</a></li>
+                                <li><a class="dropdown-item" href="/baiviet/cuatoi">📄 Bài viết của tôi</a></li>
+                                <li><a class="dropdown-item" href="/liked">❤️ Yêu thích</a></li>
+                                <% if (user.quyenHan === 'quanTri') { %>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/admin">⚙️ Quản lý Admin</a></li>
+                                <% } %>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="javascript:void(0);" onclick="dangXuat()">🚪 Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                    <% } else { %>
+                        <!-- Chưa đăng nhập -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth/dang-nhap">
+                                <i class="bi bi-box-arrow-in-right"></i> Đăng Nhập
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth/dang-ky">
+                                <i class="bi bi-person-plus"></i> Đăng Ký
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

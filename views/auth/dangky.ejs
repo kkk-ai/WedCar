@@ -1,0 +1,247 @@
+<%- include('../header.ejs') %>
+
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+    }
+    .auth-form {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        width: 100%;
+        max-width: 400px;
+    }
+    .auth-form h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+        font-size: 14px;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+    }
+    .form-group input::placeholder {
+        color: #999;
+    }
+    .error-message {
+        color: #d32f2f;
+        font-size: 13px;
+        margin-top: 5px;
+        display: none;
+    }
+    .error-message.show {
+        display: block;
+    }
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: opacity 0.3s;
+        margin-top: 10px;
+    }
+    .btn-submit:hover {
+        opacity: 0.9;
+    }
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    .divider {
+        text-align: center;
+        margin: 25px 0;
+        color: #999;
+        font-size: 14px;
+    }
+    .alternative-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .alternative-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .alternative-link a:hover {
+        text-decoration: underline;
+    }
+    .loading-spinner {
+        display: none;
+        text-align: center;
+        margin: 10px 0;
+    }
+    .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-form">
+        <h2>📝 Đăng Ký</h2>
+        
+        <form id="formDangKy">
+            <div class="form-group">
+                <label for="hoTen">Họ Tên:</label>
+                <input type="text" id="hoTen" name="hoTen" placeholder="Nhập họ tên" required>
+                <div class="error-message" id="errorHoTen"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Nhập email" required>
+                <div class="error-message" id="errorEmail"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="matKhau">Mật Khẩu:</label>
+                <input type="password" id="matKhau" name="matKhau" placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)" required>
+                <div class="error-message" id="errorMatKhau"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="matKhauLai">Xác Nhận Mật Khẩu:</label>
+                <input type="password" id="matKhauLai" name="matKhauLai" placeholder="Nhập lại mật khẩu" required>
+                <div class="error-message" id="errorMatKhauLai"></div>
+            </div>
+
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnDangKy">✅ ĐĂNG KÝ</button>
+        </form>
+
+        <div class="divider">Hoặc</div>
+
+        <div class="alternative-link">
+            Đã có tài khoản? <a href="/auth/dang-nhap">Đăng nhập ngay</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('formDangKy').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Clear error messages
+        document.querySelectorAll('.error-message').forEach(el => {
+            el.classList.remove('show');
+            el.textContent = '';
+        });
+
+        const hoTen = document.getElementById('hoTen').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const matKhau = document.getElementById('matKhau').value;
+        const matKhauLai = document.getElementById('matKhauLai').value;
+
+        // Validation
+        let hasError = false;
+
+        if (!hoTen) {
+            document.getElementById('errorHoTen').textContent = 'Vui lòng nhập họ tên';
+            document.getElementById('errorHoTen').classList.add('show');
+            hasError = true;
+        }
+
+        if (!email) {
+            document.getElementById('errorEmail').textContent = 'Vui lòng nhập email';
+            document.getElementById('errorEmail').classList.add('show');
+            hasError = true;
+        }
+
+        if (matKhau.length < 6) {
+            document.getElementById('errorMatKhau').textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+            document.getElementById('errorMatKhau').classList.add('show');
+            hasError = true;
+        }
+
+        if (matKhau !== matKhauLai) {
+            document.getElementById('errorMatKhauLai').textContent = 'Mật khẩu không trùng khớp';
+            document.getElementById('errorMatKhauLai').classList.add('show');
+            hasError = true;
+        }
+
+        if (hasError) return;
+
+        // Show loading
+        document.getElementById('loadingSpinner').style.display = 'block';
+        document.getElementById('btnDangKy').disabled = true;
+
+        try {
+            const response = await fetch('/auth/dang-ky', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    hoTen,
+                    email,
+                    matKhau,
+                    matKhauLai
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('✅ Đăng ký thành công!');
+                window.location.href = '/';
+            } else {
+                // Show error message
+                if (data.message) {
+                    alert('❌ ' + data.message);
+                }
+            }
+        } catch (error) {
+            alert('❌ Lỗi: ' + error.message);
+        } finally {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('btnDangKy').disabled = false;
+        }
+    });
+</script>
+
+<%- include('../footer.ejs') %>
