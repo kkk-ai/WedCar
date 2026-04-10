@@ -1,5 +1,5 @@
 <%- include('../header.ejs') %>
-
+<%- include('../navbar') %>
 <style>
     .form-container {
         max-width: 700px;
@@ -133,6 +133,18 @@
                 </div>
             </div>
 
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="latitude">Vĩ Độ (Latitude):</label>
+                    <input type="number" id="latitude" name="latitude" step="any" min="-90" max="90" placeholder="Ví dụ: 10.7769">
+                </div>
+
+                <div class="form-group">
+                    <label for="longitude">Kinh Độ (Longitude):</label>
+                    <input type="number" id="longitude" name="longitude" step="any" min="-180" max="180" placeholder="Ví dụ: 106.7009">
+                </div>
+            </div>
+
             <div class="button-group">
                 <button type="submit" class="btn-submit">✅ Thêm Cửa Hàng</button>
                 <a href="/api/cuahang" class="btn-cancel">❌ Hủy</a>
@@ -150,6 +162,8 @@
         const soDienThoai = document.getElementById('soDienThoai').value.trim();
         const diaChi = document.getElementById('diaChi').value.trim();
         const gioMoCua = document.getElementById('gioMoCua').value;
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
 
         // Xóa thông báo lỗi
         document.getElementById('errorTenCuaHang').textContent = '';
@@ -179,7 +193,9 @@
                     email,
                     soDienThoai,
                     diaChi,
-                    gioMoCua
+                    gioMoCua,
+                    latitude,
+                    longitude
                 })
             });
 

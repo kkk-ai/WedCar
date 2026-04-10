@@ -204,4 +204,52 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// API: So sánh xe (chatbot comparison)
+router.post('/api/compare', async (req, res) => {
+  try {
+    const { carNames } = req.body;
+    
+    if (!carNames || !Array.isArray(carNames) || carNames.length === 0) {
+      return res.status(400).json({ message: 'Vui lòng cung cấp danh sách tên xe' });
+    }
+
+    // Tìm xe theo tên hoặc ID
+    const searchQueries = carNames.map(name => {
+      // Nếu là ObjectId hợp lệ, tìm theo ID
+      if (/^[0-9a-fA-F]{24}$/.test(name)) {
+        return { _id: name };
+      }
+      // Ngược lại tìm theo tên (case-insensitive)
+      return { tenXe: { $regex: name, $options: 'i' } };
+    });
+
+    const cars = await Promise.all(
+      searchQueries.map(query => Xe.findOne(query))
+    );
+
+    const foundCars = cars.filter(car => car !== null);
+
+    if (foundCars.length === 0) {
+      return res.status(404).json({ 
+        message: 'Không tìm thấy xe nào để so sánh',
+        searchedNames: carNames 
+      });
+    }
+
+    if (foundCars.length === 1) {
+      return res.status(400).json({ 
+        message: 'Cần ít nhất 2 xe để so sánh',
+        foundCars: foundCars 
+      });
+    }
+
+    res.json({
+      message: `Tìm thấy ${foundCars.length} xe để so sánh`,
+      comparison: foundCars
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

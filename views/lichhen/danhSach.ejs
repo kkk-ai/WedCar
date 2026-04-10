@@ -1,5 +1,6 @@
-<%- include('../header') %>
 
+<%- include('../header') %>
+<%- include('../navbar') %>
 <style>
   .appointment-container {
     max-width: 1200px;
@@ -223,7 +224,7 @@
 <div class="appointment-container">
   <div class="appointment-header">
     <h1>📅 Quản Lý Lịch Hẹn</h1>
-    <% if (user) { %>
+    <% if (user && user.quyenHan === 'quanTri') { %>
       <a href="/api/lichhen/them" class="btn-add">+ Thêm Lịch Hẹn</a>
     <% } %>
   </div>
@@ -286,8 +287,11 @@
             </td>
             <td>
               <div class="action-buttons">
-                <a href="/api/lichhen/sua/<%= lich._id %>" class="btn-sm btn-edit">✏️ Sửa</a>
-                <button class="btn-sm btn-delete" onclick="deleteAppointment('<%= lich._id %>')">🗑️ Xóa</button>
+                <% if (user && user.quyenHan === 'quanTri') { %>
+                  <a href="/api/lichhen/sua/<%= lich._id %>" class="btn-sm btn-edit">✏️ Sửa</a>
+                <% } %>
+                       <button class="btn-sm btn-delete" onclick="deleteAppointment('<%= lich._id %>')">🗑️ Xóa</button>
+
               </div>
             </td>
           </tr>

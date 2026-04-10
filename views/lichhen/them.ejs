@@ -1,5 +1,5 @@
 <%- include('../header') %>
-
+<%- include('../navbar') %>
 <style>
   .appointment-form-container {
     max-width: 700px;
@@ -144,6 +144,77 @@
     100% { transform: rotate(360deg); }
   }
 
+  .car-details-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 30px;
+    border-left: 5px solid #f58220;
+  }
+
+  .car-details-header {
+    background: #f58220;
+    color: white;
+    padding: 20px;
+  }
+
+  .car-details-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .car-details-content {
+    padding: 20px;
+  }
+
+  .car-details-img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+
+  .car-details-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .car-info-item {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 5px;
+    border-left: 3px solid #f58220;
+  }
+
+  .car-info-item label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .car-info-item span {
+    display: block;
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+  }
+
+  .car-price {
+    display: block;
+    font-size: 24px;
+    color: #dc3545;
+    font-weight: bold;
+    margin-top: 15px;
+  }
+
   @media (max-width: 768px) {
     .form-row {
       grid-template-columns: 1fr;
@@ -151,6 +222,10 @@
 
     .form-actions {
       flex-direction: column;
+    }
+
+    .car-details-info {
+      grid-template-columns: 1fr;
     }
   }
 </style>
@@ -160,6 +235,54 @@
     <div class="form-header">
       <h1>📅 Đặt Lịch Hẹn</h1>
     </div>
+
+    <% if (selectedCar) { %>
+      <div class="car-details-container">
+        <div class="car-details-header">
+          <h3>🚗 Chi Tiết Xe Được Chọn</h3>
+        </div>
+        <div class="car-details-content">
+          <% 
+            const carImage = selectedCar.hinhAnh?.[0] || '';
+            const imageSrc = carImage
+              ? /(^https?:\/\/|^\/)/i.test(carImage)
+                ? carImage
+                : '/images/' + carImage.replace(/^\/+/, '')
+              : '/images/no-car.jpg';
+          %>
+          <img src="<%= imageSrc %>" alt="<%= selectedCar.tenXe %>" class="car-details-img">
+          
+          <div class="car-details-info">
+            <div class="car-info-item">
+              <label>Tên Xe</label>
+              <span><%= selectedCar.tenXe %></span>
+            </div>
+            <div class="car-info-item">
+              <label>Hãng Xe</label>
+              <span><%= selectedCar.hangXe %></span>
+            </div>
+            <div class="car-info-item">
+              <label>Năm Sản Xuất</label>
+              <span><%= selectedCar.namSanXuat ? new Date(selectedCar.namSanXuat).getFullYear() : 'N/A' %></span>
+            </div>
+            <div class="car-info-item">
+              <label>Loại Nhiên Liệu</label>
+              <span><%= selectedCar.loaiNhienLieu || 'N/A' %></span>
+            </div>
+            <div class="car-info-item">
+              <label>Hộp Số</label>
+              <span><%= selectedCar.hopSo || 'N/A' %></span>
+            </div>
+            <div class="car-info-item">
+              <label>Màu Sắc</label>
+              <span><%= selectedCar.mauSac || 'N/A' %></span>
+            </div>
+          </div>
+          <span class="car-price">Giá: <%= new Intl.NumberFormat('vi-VN').format(selectedCar.giaBan) %> đ</span>
+        </div>
+      </div>
+    <% } %>
+
     <form class="form-body" id="appointmentForm">
       <div class="info-box">
         ℹ️ Vui lòng điền đầy đủ thông tin để đặt lịch hẹn tại cửa hàng
@@ -171,7 +294,7 @@
           <option value="">-- Chọn Xe --</option>
           <% if (xeList && xeList.length > 0) { %>
             <% xeList.forEach(x => { %>
-              <option value="<%= x._id %>"><%= x.tenXe %> - <%= x.hangXe %> (<%= new Date(x.namSanXuat).getFullYear() %>)</option>
+              <option value="<%= x._id %>" <% if (selectedCar && selectedCar._id.toString() === x._id.toString()) { %>selected<% } %>><%= x.tenXe %> - <%= x.hangXe %> (<%= new Date(x.namSanXuat).getFullYear() %>)</option>
             <% }); %>
           <% } %>
         </select>
@@ -227,8 +350,7 @@
       ngayHen: document.getElementById('ngayHen').value,
       gioHen: document.getElementById('gioHen').value,
       cuaHang: document.getElementById('cuaHang').value,
-      ghiChu: document.getElementById('ghiChu').value,
-      nguoiDung: '<%= user?._id || "" %>'
+      ghiChu: document.getElementById('ghiChu').value
     };
 
     // Validation
@@ -287,6 +409,79 @@
   // Set minimum date to today
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('ngayHen').setAttribute('min', today);
+
+  // Handle car selection change
+  const carList = <%- JSON.stringify(xeList) %>;
+
+  document.getElementById('xe').addEventListener('change', async (e) => {
+    const selectedCarId = e.target.value;
+    if (!selectedCarId) {
+      // Hide car details when no car is selected
+      const carDetailsContainer = document.querySelector('.car-details-container');
+      if (carDetailsContainer) {
+        carDetailsContainer.style.display = 'none';
+      }
+      return;
+    }
+
+    // Find the car data from the list
+    const car = carList.find(c => c._id === selectedCarId);
+    if (car) {
+      // Create or update car details display
+      let carDetailsContainer = document.querySelector('.car-details-container');
+      
+      if (!carDetailsContainer) {
+        carDetailsContainer = document.createElement('div');
+        carDetailsContainer.className = 'car-details-container';
+        document.querySelector('.form-card').insertBefore(carDetailsContainer, document.querySelector('form'));
+      }
+
+      const imageSrc = car.hinhAnh?.[0] 
+        ? (/(^https?:\/\/|^\/)/i.test(car.hinhAnh[0]) 
+          ? car.hinhAnh[0]
+          : '/images/' + car.hinhAnh[0].replace(/^\/+/, ''))
+        : '/images/no-car.jpg';
+
+      carDetailsContainer.innerHTML = `
+        <div class="car-details-header">
+          <h3>🚗 Chi Tiết Xe Được Chọn</h3>
+        </div>
+        <div class="car-details-content">
+          <img src="${imageSrc}" alt="${car.tenXe}" class="car-details-img" onerror="this.src='/images/no-car.jpg'">
+          
+          <div class="car-details-info">
+            <div class="car-info-item">
+              <label>Tên Xe</label>
+              <span>${car.tenXe}</span>
+            </div>
+            <div class="car-info-item">
+              <label>Hãng Xe</label>
+              <span>${car.hangXe}</span>
+            </div>
+            <div class="car-info-item">
+              <label>Năm Sản Xuất</label>
+              <span>${car.namSanXuat ? new Date(car.namSanXuat).getFullYear() : 'N/A'}</span>
+            </div>
+            <div class="car-info-item">
+              <label>Loại Nhiên Liệu</label>
+              <span>${car.loaiNhienLieu || 'N/A'}</span>
+            </div>
+            <div class="car-info-item">
+              <label>Hộp Số</label>
+              <span>${car.hopSo || 'N/A'}</span>
+            </div>
+            <div class="car-info-item">
+              <label>Màu Sắc</label>
+              <span>${car.mauSac || 'N/A'}</span>
+            </div>
+          </div>
+          <span class="car-price">Giá: ${new Intl.NumberFormat('vi-VN').format(car.giaBan)} đ</span>
+        </div>
+      `;
+      carDetailsContainer.style.display = 'block';
+    }
+  });
+
 </script>
 
 <%- include('../footer') %>

@@ -1,5 +1,5 @@
 <%- include('../header') %>
-
+<%- include('../navbar') %>
 <style>
   .order-form-container {
     max-width: 900px;
@@ -534,7 +534,13 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ donHangId: data.donHang._id })
         });
-        const zaloData = await zaloRes.json();
+        const zaloRaw = await zaloRes.text();
+        let zaloData = {};
+        try {
+          zaloData = zaloRaw ? JSON.parse(zaloRaw) : {};
+        } catch (parseError) {
+          zaloData = { message: zaloRaw || 'Phan hoi khong hop le tu may chu' };
+        }
 
         if (zaloRes.ok && zaloData.order_url) {
           window.location.href = zaloData.order_url;

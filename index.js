@@ -97,6 +97,18 @@ app.get('/khachhang', requireLogin, async (req, res) => {
   }
 });
 
+app.get('/gioi-thieu', (req, res) => {
+  res.render('gioi-thieu', {
+    title: 'Giới thiệu'
+  });
+});
+
+app.get('/huong-dan', (req, res) => {
+  res.render('huong-dan', {
+    title: 'Hướng dẫn'
+  });
+});
+
 //cổng
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

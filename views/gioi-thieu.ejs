@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <%- include('header') %>
+  <style>
+    .hero-section {
+      background: linear-gradient(135deg, #f58220 0%, #ff9f43 100%);
+      color: white;
+      padding: 100px 0;
+      text-align: center;
+    }
+    .hero-section h1 {
+      font-size: 3.5rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .hero-section p {
+      font-size: 1.3rem;
+      margin-bottom: 0;
+    }
+    .section-title {
+      border-left: 5px solid #f58220;
+      padding-left: 20px;
+      margin-bottom: 40px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+    }
+    .section-title.center {
+      border-left: none;
+      text-align: center;
+      padding-left: 0;
+    }
+    .about-box {
+      background: #f8f9fa;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .value-card {
+      text-align: center;
+      padding: 30px;
+      border-radius: 10px;
+      background: white;
+      border-top: 4px solid #f58220;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+      transition: transform 0.3s;
+    }
+    .value-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    }
+    .value-card i {
+      font-size: 2.5rem;
+      color: #f58220;
+      margin-bottom: 15px;
+    }
+    .value-card h5 {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .value-card p {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .service-card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      border-left: 4px solid #f58220;
+      transition: all 0.3s;
+    }
+    .service-card:hover {
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+      transform: translateX(5px);
+    }
+    .service-card h5 {
+      color: #333;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .service-card p {
+      color: #666;
+      line-height: 1.6;
+    }
+    .team-member {
+      text-align: center;
+      padding: 20px;
+    }
+    .team-member img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: #f58220;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      color: white;
+      font-size: 3rem;
+    }
+    .team-member h5 {
+      font-weight: bold;
+      color: #333;
+      margin: 10px 0 5px;
+    }
+    .team-member p {
+      color: #f58220;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    .stats-section {
+      background: linear-gradient(135deg, #f58220 0%, #ff9f43 100%);
+      color: white;
+      padding: 60px 0;
+      text-align: center;
+      margin: 50px 0;
+    }
+    .stat-item {
+      padding: 30px;
+    }
+    .stat-item h4 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .stat-item p {
+      font-size: 1.1rem;
+    }
+    .timeline {
+      position: relative;
+      padding: 20px 0;
+    }
+    .timeline-item {
+      margin-bottom: 30px;
+      padding-left: 50px;
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 30px;
+      height: 30px;
+      background: #f58220;
+      border-radius: 50%;
+      border: 4px solid white;
+      box-shadow: 0 0 0 4px #f58220;
+    }
+    .timeline-item h5 {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    .timeline-item p {
+      color: #666;
+    }
+    .btn-contact {
+      background-color: #f58220;
+      border-color: #f58220;
+      color: white;
+      font-weight: bold;
+      padding: 12px 30px;
+      border-radius: 5px;
+      transition: all 0.3s;
+    }
+    .btn-contact:hover {
+      background-color: #e67616;
+      border-color: #e67616;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(245, 130, 32, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid p-0">
+    <%- include('navbar') %>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <h1>WEDCAR</h1>
+        <p>Nền tảng mua bán xe ôtô uy tín hàng đầu Việt Nam</p>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+      <!-- About Section -->
+      <section class="mb-5">
+        <h2 class="section-title center mb-4">Về WedCar</h2>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="about-box">
+              <h5 class="text-warning fw-bold mb-3">📖 Câu chuyện của chúng tôi</h5>
+              <p>WedCar được thành lập với mục đích cách mạng hóa thị trường mua bán xe ôtô tại Việt Nam. Chúng tôi tin rằng mỗi khách hàng xứng đáng nhận được dịch vụ chất lượng cao, minh bạch và đáng tin cậy.</p>
+              <p>Với kinh nghiệm hơn 10 năm trong ngành công nghiệp ôtô, đội ngũ của chúng tôi đã phục vụ hàng nghìn khách hàng hài lòng trên toàn quốc.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="about-box">
+              <h5 class="text-warning fw-bold mb-3">🎯 Sứ mệnh của chúng tôi</h5>
+              <p>Trở thành cầu nối tin cậy giữa những người yêu thích xe và những chiếc ôtô chất lượng, cung cấp trải nghiệm mua bán xe an toàn, dễ dàng và hiệu quả.</p>
+              <p>Chúng tôi cam kết mang lại giá trị tối đa cho khách hàng thông qua các dịch vụ chuyên nghiệp, tư vấn tận tình và hỗ trợ sau bán hàng hoàn hảo.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Vision & Values -->
+      <section class="mb-5">
+        <h2 class="section-title center mb-5">Giá trị cốt lõi</h2>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="value-card">
+              <i class="bi bi-shield-check"></i>
+              <h5>Tin Cậy</h5>
+              <p>Minh bạch trong mọi giao dịch, cung cấp thông tin đầy đủ và chính xác về từng chiếc xe.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="value-card">
+              <i class="bi bi-person-lines-fill"></i>
+              <h5>Chuyên Nghiệp</h5>
+              <p>Đội ngũ tư vấn viên được đào tạo, sẵn sàng giúp bạn tìm chiếc xe phù hợp nhất.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="value-card">
+              <i class="bi bi-hand-thumbs-up"></i>
+              <h5>Hỗ Trợ Tối Đa</h5>
+              <p>Dịch vụ tư vấn trước, trong và sau khi mua hàng, đảm bảo sự hài lòng của bạn.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      
+
+      <!-- Services Section -->
+      <section class="mb-5">
+        <h2 class="section-title center mb-4">Dịch Vụ Của Chúng Tôi</h2>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="service-card">
+              <h5><i class="bi bi-search text-warning"></i> Tìm Kiếm Xe</h5>
+              <p>Duyệt qua hàng trăm chiếc xe với các bộ lọc thông minh, tìm chiếc xe ôtô phù hợp với nhu cầu và ngân sách của bạn.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-card">
+              <h5><i class="bi bi-calendar-check text-warning"></i> Đặt Lịch Xem Xe</h5>
+              <p>Lên lịch xem xe trực tuyến dễ dàng, không cần phải gọi điện hoặc gặp gỡ. Chúng tôi sẽ liên hệ xác nhận với bạn.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-card">
+              <h5><i class="bi bi-controller text-warning"></i> Tư Vấn Tận Tình</h5>
+              <p>Nhận tư vấn chuyên sâu từ các chuyên gia về các tính năng, hiệu suất và so sánh giá của các dòng xe khác nhau.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-card">
+              <h5><i class="bi bi-credit-card text-warning"></i> Hỗ Trợ Thanh Toán</h5>
+              <p>Nhiều hình thức thanh toán linh hoạt, hỗ trợ trả góp với lãi suất tốt từ các đối tác tín dụng uy tín.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-card">
+              <h5><i class="bi bi-file-earmark-check text-warning"></i> Thủ Tục Pháp Lý</h5>
+              <p>Hỗ trợ toàn bộ thủ tục pháp lý, từ kiểm tra giấy tờ xe đến thủ tục đăng ký, chuyển đổi biển số.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="service-card">
+              <h5><i class="bi bi-tools text-warning"></i> Sau Bán Hàng</h5>
+              <p>Dịch vụ bảo hành, bảo dưỡng, và hỗ trợ kỹ thuật liên tục, đảm bảo kiếp sống của chiếc xe của bạn.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      
+
+      <!-- Contact Section -->
+      <section class="mb-5 bg-light p-5 rounded-3">
+        <h2 class="section-title center mb-4">Liên Hệ Với Chúng Tôi</h2>
+        <div class="row text-center">
+          <div class="col-md-4 mb-4">
+            <i class="bi bi-telephone" style="font-size: 2rem; color: #f58220;"></i>
+            <h5 class="mt-3 fw-bold">Điện Thoại</h5>
+            <p><a href="tel:0938119439" class="text-decoration-none">0938119439</a></p>
+          </div>
+          <div class="col-md-4 mb-4">
+            <i class="bi bi-envelope" style="font-size: 2rem; color: #f58220;"></i>
+            <h5 class="mt-3 fw-bold">Email</h5>
+            <p><a href="mailto:contact@wedcar.vn" class="text-decoration-none">contact@wedcar.vn</a></p>
+          </div>
+          <div class="col-md-4 mb-4">
+            <i class="bi bi-geo-alt" style="font-size: 2rem; color: #f58220;"></i>
+            <h5 class="mt-3 fw-bold">Địa Chỉ</h5>
+            <p>123 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh</p>
+          </div>
+        </div>
+        <div class="text-center mt-4">
+          <a href="tel:0938119439" class="btn btn-contact">Gọi Cho Chúng Tôi</a>
+          <a href="mailto:contact@wedcar.vn" class="btn btn-contact ms-2">Gửi Email</a>
+        </div>
+      </section>
+    </div>
+
+    <%- include('footer') %>
+  </div>
+
+  <%- include('javascript') %>
+</body>
+</html>

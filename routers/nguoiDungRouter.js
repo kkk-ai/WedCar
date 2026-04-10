@@ -2,23 +2,59 @@ const express = require('express');
 const router = express.Router();
 const NguoiDung = require('../models/NguoiDung');
 const bcrypt = require('bcryptjs');
+const { requireLogin, requireAdmin } = require('../middlewares/auth');
 
-// Trang danh sách người dùng
-router.get('/', async (req, res) => {
+function getSessionUserId(req) {
+  return req.session?.user?._id || req.session?.user?.id || null;
+}
+
+function isAdmin(req) {
+  return req.session?.user?.quyenHan === 'quanTri';
+}
+
+// Trang danh sách/cập nhật thông tin người dùng
+router.get('/', requireLogin, async (req, res) => {
   try {
-    const nguoiDungList = await NguoiDung.find();
-    res.render('nguoidung/danhSach', { 
-      title: 'Danh sách người dùng',
-      nguoiDungList: nguoiDungList 
-    });
+    const userId = getSessionUserId(req);
+    if (!userId) {
+      return res.status(401).redirect('/auth/dang-nhap');
+    }
+
+    // Admin: xem danh sách tất cả người dùng
+    // Khách hàng: xem chỉ thông tin của chính mình
+    if (isAdmin(req)) {
+      const nguoiDungList = await NguoiDung.find();
+      res.render('nguoidung/danhSach', { 
+        title: 'Quản Lý Người Dùng',
+        nguoiDungList: nguoiDungList,
+        isAdmin: true,
+        user: req.session.user
+      });
+    } else {
+      const currentUser = await NguoiDung.findById(userId);
+      if (!currentUser) {
+        return res.status(404).render('error', { message: 'Không tìm thấy thông tin người dùng' });
+      }
+      res.render('nguoidung/danhSach', { 
+        title: 'Thông Tin Cá Nhân',
+        currentUser: currentUser,
+        isAdmin: false,
+        user: req.session.user
+      });
+    }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).render('error', { message: error.message });
   }
 });
 
-// API: Lấy danh sách tất cả người dùng (JSON)
-router.get('/api/list', async (req, res) => {
+// API: Lấy danh sách tất cả người dùng (JSON) - chỉ admin
+router.get('/api/list', requireLogin, async (req, res) => {
   try {
+    const isUserAdmin = isAdmin(req);
+    if (!isUserAdmin) {
+      return res.status(403).json({ message: 'Bạn không có quyền xem danh sách người dùng' });
+    }
+
     const nguoiDungList = await NguoiDung.find();
     res.json(nguoiDungList);
   } catch (error) {
@@ -26,13 +62,13 @@ router.get('/api/list', async (req, res) => {
   }
 });
 
-// Trang thêm người dùng
-router.get('/them', (req, res) => {
+// Trang thêm người dùng (chỉ admin)
+router.get('/them', requireAdmin, (req, res) => {
   res.render('nguoidung/them', { title: 'Thêm người dùng' });
 });
 
-// Trang chỉnh sửa người dùng
-router.get('/sua/:id', async (req, res) => {
+// Trang chỉnh sửa người dùng (chỉ admin)
+router.get('/sua/:id', requireAdmin, async (req, res) => {
   try {
     const nguoiDung = await NguoiDung.findById(req.params.id);
     if (!nguoiDung) {
@@ -60,8 +96,8 @@ router.get('/chi-tiet/:id', async (req, res) => {
   }
 });
 
-// Tạo người dùng mới
-router.post('/', async (req, res) => {
+// Tạo người dùng mới (chỉ admin)
+router.post('/', requireAdmin, async (req, res) => {
   // Kiểm tra email
   const emailExists = await NguoiDung.findOne({ email: req.body.email });
   if (emailExists) {
@@ -93,9 +129,18 @@ router.post('/', async (req, res) => {
 });
 
 // Cập nhật người dùng
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireLogin, async (req, res) => {
   try {
-    const nguoiDung = await NguoiDung.findById(req.params.id);
+    const userId = getSessionUserId(req);
+    const targetId = req.params.id;
+    const isUserAdmin = isAdmin(req);
+
+    // Kiểm tra quyền: khách hàng chỉ cập nhật thông tin của chính mình
+    if (!isUserAdmin && String(userId) !== String(targetId)) {
+      return res.status(403).json({ message: 'Bạn không có quyền cập nhật thông tin người dùng khác' });
+    }
+
+    const nguoiDung = await NguoiDung.findById(targetId);
     if (!nguoiDung) {
       return res.status(404).json({ message: 'Không tìm thấy người dùng' });
     }
@@ -104,7 +149,11 @@ router.put('/:id', async (req, res) => {
     nguoiDung.email = req.body.email || nguoiDung.email;
     nguoiDung.soDienThoai = req.body.soDienThoai || nguoiDung.soDienThoai;
     nguoiDung.diaChi = req.body.diaChi || nguoiDung.diaChi;
-    nguoiDung.quyenHan = req.body.quyenHan || nguoiDung.quyenHan;
+    
+    // Chỉ admin được cập nhật quyền hạn
+    if (isUserAdmin && req.body.quyenHan) {
+      nguoiDung.quyenHan = req.body.quyenHan;
+    }
 
     // Nếu có cập nhật mật khẩu, hash lại
     if (req.body.matKhau) {
@@ -113,14 +162,17 @@ router.put('/:id', async (req, res) => {
     }
 
     const updatedNguoiDung = await nguoiDung.save();
-    res.json(updatedNguoiDung);
+    res.json({
+      message: 'Cập nhật thông tin thành công',
+      nguoiDung: updatedNguoiDung
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
 
-// Xóa người dùng
-router.delete('/:id', async (req, res) => {
+// Xóa người dùng (chỉ admin)
+router.delete('/:id', requireAdmin, async (req, res) => {
   try {
     const nguoiDung = await NguoiDung.findById(req.params.id);
     if (!nguoiDung) {

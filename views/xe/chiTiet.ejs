@@ -1,95 +1,526 @@
 <%- include('../header.ejs') %>
-
+<%- include('../navbar') %>
 <style>
+  body {
+    background: #f5f5f5;
+  }
+
+  .breadcrumb-section {
+    background: white;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 13px;
+  }
+
+  .breadcrumb-section a {
+    color: #0066cc;
+    text-decoration: none;
+    margin: 0 4px;
+  }
+
+  .breadcrumb-section span {
+    color: #666;
+    margin: 0 4px;
+  }
+
   .detail-container {
-    max-width: 1000px;
-    margin: 30px auto;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 12px;
   }
-  .image-gallery {
+
+  .detail-content {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-    margin-bottom: 20px;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
   }
-  .image-gallery img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
+
+  .left-column {
+    background: white;
     border-radius: 8px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
+
+  .main-image {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: #f0f0f0;
+    overflow: hidden;
+  }
+
   .main-image img {
     width: 100%;
-    border-radius: 10px;
-    height: 350px;
+    height: 100%;
     object-fit: cover;
   }
-  .info-card {
-    margin-top: 20px;
+
+  .image-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 15px;
+    transform: translateY(-50%);
+    pointer-events: none;
   }
-  .info-row {
+
+  .image-nav button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    pointer-events: auto;
+    transition: all 0.3s ease;
+  }
+
+  .image-nav button:hover {
+    background: rgba(0,0,0,0.7);
+  }
+
+  .image-counter {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .image-gallery {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 12px;
+    background: #fafafa;
+    border-top: 1px solid #e0e0e0;
   }
-  .info-box {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 16px;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+
+  .image-gallery img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
   }
-  .info-box h4 {
-    margin-bottom: 12px;
+
+  .image-gallery img:hover,
+  .image-gallery img.active {
+    border-color: #0066cc;
+    transform: scale(1.05);
+  }
+
+  .specs-section {
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .specs-section h3 {
     font-size: 16px;
     font-weight: 700;
+    margin-bottom: 15px;
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
   }
-  .btn-group-action {
-    margin-top: 20px;
-    display: flex;
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
+
+  .spec-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .spec-item:last-child {
+    border-bottom: none;
+  }
+
+  .spec-label {
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .spec-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .description-section {
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+    background: #fafafa;
+  }
+
+  .description-section h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    margin-top: 0;
+  }
+
+  .description-section p {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-line;
+  }
+
+  .right-column {
+    position: sticky;
+    top: 20px;
+  }
+
+  .price-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 15px;
+  }
+
+  .car-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .car-subtitle {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 15px;
+  }
+
+  .price {
+    font-size: 28px;
+    font-weight: 700;
+    color: #d32f2f;
+    margin-bottom: 20px;
+  }
+
+  .info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  .info-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .info-text {
+    flex: 1;
+  }
+
+  .info-label {
+    color: #999;
+    font-size: 12px;
+  }
+
+  .info-value {
+    color: #333;
+    font-weight: 600;
+  }
+
+  .action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .btn-call {
+    background: #0066cc;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-call:hover {
+    background: #0052a3;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+  }
+
+  .btn-message {
+    background: white;
+    color: #0066cc;
+    border: 1px solid #0066cc;
+    padding: 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-message:hover {
+    background: #f0f7ff;
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+  }
+
+  .location-card {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    font-size: 13px;
+  }
+
+  .location-card h4 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .location-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .location-item:last-child {
+    border-bottom: none;
+  }
+
+  .location-label {
+    color: #999;
+  }
+
+  .location-value {
+    color: #0066cc;
+    font-weight: 600;
+  }
+
+  @media (max-width: 960px) {
+    .detail-content {
+      grid-template-columns: 1fr;
+    }
+
+    .right-column {
+      position: static;
+    }
+
+    .specs-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .image-gallery {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .main-image {
+      height: 300px;
+    }
+
+    .car-title {
+      font-size: 16px;
+    }
+
+    .price {
+      font-size: 24px;
+    }
+
+    .image-nav button {
+      width: 35px;
+      height: 35px;
+      font-size: 18px;
+    }
+  }
+
 </style>
 
+<div class="breadcrumb-section">
+  <div class="detail-container">
+    <a href="/">Trang chủ</a>
+    <span>›</span>
+    <a href="/"><%= xe.hangXe %></a>
+    <span>›</span>
+    <a href="/"><%= xe.loaiXe %></a>
+    <span>›</span>
+    <span><strong><%= xe.tenXe %></strong></span>
+  </div>
+</div>
+
 <div class="detail-container">
+  <input type="hidden" id="isUserLoggedIn" value="<%= user ? '1' : '0' %>">
+  <input type="hidden" id="xeImages" data-images='<%= JSON.stringify(xe.hinhAnh || []) %>'>
   
-  <a class="btn btn-link mb-3" href="/">← Quay về</a>
-  <div class="row">
-    <div class="col-md-6">
-      <div class="main-image">
-        <img src="<%= xe.hinhAnh && xe.hinhAnh.length ? (/(^https?:\/\/|^\/)/i.test(xe.hinhAnh[0]) ? xe.hinhAnh[0] : '/images/' + xe.hinhAnh[0]) : 'https://via.placeholder.com/800x450?text=No+Image' %>" alt="<%= xe.tenXe %>">
+  <div class="detail-content">
+    <!-- Left Column -->
+    <div class="left-column">
+      <div class="main-image" id="mainImageContainer">
+        <img id="mainImage" src="" alt="<%= xe.tenXe %>">
+        <div class="image-nav">
+          <button onclick="prevImage()">‹</button>
+          <button onclick="nextImage()">›</button>
+        </div>
+        <div class="image-counter">
+          <span id="imageCounter">1</span> / <span id="imageTotalCounter">1</span>
+        </div>
       </div>
-      <div class="image-gallery">
-        <% (xe.hinhAnh || []).forEach(item => { %>
-          <img src="<%= /(^https?:\/\/|^\/)/i.test(item) ? item : '/images/' + item %>" alt="Xe">
-        <% }) %>
+
+      <div class="image-gallery" id="imageGallery"></div>
+
+      <!-- Specs Section -->
+      <div class="specs-section">
+        <h3>Thông số kỹ thuật</h3>
+        <div class="specs-grid">
+          <div class="spec-item">
+            <div class="spec-label">Hãng xe</div>
+            <div class="spec-value"><%= xe.hangXe %></div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Loại xe</div>
+            <div class="spec-value"><%= xe.loaiXe %></div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Năm sản xuất</div>
+            <div class="spec-value"><%= xe.namSanXuat || '-' %></div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Loại nhiên liệu</div>
+            <div class="spec-value"><%= xe.nhienLieu === 'Xang' ? 'Xăng' : (xe.nhienLieu === 'Dau' ? 'Dầu' : (xe.nhienLieu === 'Dien' ? 'Điện' : (xe.nhienLieu === 'Hybrid' ? 'Hybrid' : '-'))) %></div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Hộp số</div>
+            <div class="spec-value"><%= xe.hopSo === 'SoSan' ? 'Số sàn' : (xe.hopSo === 'SoTuDong' ? 'Số tự động' : '-') %></div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Màu sắc</div>
+            <div class="spec-value"><%= xe.mauSac || '-' %></div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Số lượng tồn</div>
+            <div class="spec-value"><%= xe.soLuongTon %></div>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Xe nổi bật</div>
+            <div class="spec-value"><%= xe.noiBat ? '✓ Có' : 'Không' %></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description Section -->
+      <div class="description-section">
+        <h3>Mô tả chi tiết</h3>
+        <p><%= xe.moTa || 'Không có mô tả chi tiết' %></p>
       </div>
     </div>
-    <div class="col-md-6">
-      <h2><%= xe.tenXe %></h2>
-      <p class="text-muted">Hãng: <strong><%= xe.hangXe %></strong> | Loại: <strong><%= xe.loaiXe %></strong></p>
-      <h3 class="text-danger fw-bold"><%= new Intl.NumberFormat('vi-VN').format(xe.giaBan) %> đ</h3>
-      <p><span class="badge bg-info text-dark">Năm SX: <%= xe.namSanXuat || 'N/A' %></span></p>
 
-      <div class="btn-group-action">
-        <button class="btn btn-success" onclick="buyNow('<%= xe._id %>')">Mua ngay</button>
-        <button class="btn btn-primary" onclick="bookTestDrive('<%= xe._id %>')">Đặt lịch xem</button>
+    <!-- Right Column -->
+    <div class="right-column">
+      <!-- Price Card -->
+      <div class="price-card">
+        <div class="car-title"><%= xe.tenXe %></div>
+        <div class="car-subtitle"><%= xe.hangXe %> • <%= xe.loaiXe %></div>
+        <div class="price"><%= new Intl.NumberFormat('vi-VN').format(xe.giaBan) %> đ</div>
+
+        <!-- Info List -->
+        <div class="info-list">
+          <div class="info-item">
+            <div class="info-icon">📋</div>
+            <div class="info-text">
+              <div class="info-label">Nhân liệu</div>
+              <div class="info-value"><%= xe.nhienLieu === 'Xang' ? 'Xăng' : (xe.nhienLieu === 'Dau' ? 'Dầu' : (xe.nhienLieu === 'Dien' ? 'Điện' : (xe.nhienLieu === 'Hybrid' ? 'Hybrid' : 'Không xác định'))) %></div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">🔧</div>
+            <div class="info-text">
+              <div class="info-label">Hộp số</div>
+              <div class="info-value"><%= xe.hopSo === 'SoSan' ? 'Số sàn' : (xe.hopSo === 'SoTuDong' ? 'Số tự động' : 'Không xác định') %></div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">📅</div>
+            <div class="info-text">
+              <div class="info-label">Năm sản xuất</div>
+              <div class="info-value"><%= xe.namSanXuat || 'Không xác định' %></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn-call" onclick="callSeller('0938119439')">
+            <span>📞</span> Liên hệ của hàng
+          </button>
+          <button class="btn btn-success btn-sm" onclick="buyNow('<%= xe._id %>')">
+            <span>🛒</span> Mua ngay
+          </button>
+        </div>
+
+        <button class="btn btn-info btn-sm" style="width: 100%; margin-top: 10px;" onclick="bookTestDrive('<%= xe._id %>')">
+          📅 Đặt lịch xem
+        </button>
       </div>
 
-      <div class="info-card">
-        <div class="info-row">
-          <div class="info-box">
-            <h4>Thông số cơ bản</h4>
-            <p>Nhiên liệu: <strong><%= xe.nhienLieu || '-' %></strong></p>
-            <p>Hộp số: <strong><%= xe.hopSo || '-' %></strong></p>
-            <p>Màu sắc: <strong><%= xe.mauSac || '-' %></strong></p>
-            <p>Số lượng tồn: <strong><%= xe.soLuongTon %></strong></p>
-            <p>Xe nổi bật: <strong><%= xe.noiBat ? 'Có' : 'Không' %></strong></p>
-          </div>
-          <div class="info-box">
-            <h4>Mô tả</h4>
-            <p style="white-space: pre-line;"><%= xe.moTa || 'Không có mô tả' %></p>
-          </div>
+      <!-- Location Card -->
+      <div class="location-card">
+        <h4>Thông tin cửa hàng</h4>
+        <div class="location-item">
+          <span class="location-label">Địa chỉ</span>
+          <span class="location-value">Hồ Chí Minh</span>
+        </div>
+        <div class="location-item">
+          <span class="location-label">Điện thoại</span>
+          <span class="location-value">0938119439</span>
         </div>
       </div>
     </div>
@@ -97,12 +528,98 @@
 </div>
 
 <script>
-  function buyNow(id) {
-    window.location.href = '/auth/dang-nhap';
+  let currentImageIndex = 0;
+  let images = [];
+
+  function initImages() {
+    const imagesData = document.getElementById('xeImages').getAttribute('data-images');
+    try {
+      images = JSON.parse(imagesData);
+    } catch {
+      images = ['https://via.placeholder.com/800x450?text=No+Image'];
+    }
+
+    if (!images || images.length === 0) {
+      images = ['https://via.placeholder.com/800x450?text=No+Image'];
+    }
+
+    // Fix image paths
+    images = images.map(img => {
+      if (!img) return 'https://via.placeholder.com/800x450?text=No+Image';
+      if (/(^https?:\/\/|^\/)/i.test(img)) return img;
+      return '/images/' + img.replace(/^\/+/, '');
+    });
+
+    document.getElementById('imageTotalCounter').textContent = images.length;
+
+    renderGallery();
+    displayImage(0);
   }
+
+  function renderGallery() {
+    const gallery = document.getElementById('imageGallery');
+    gallery.innerHTML = '';
+    images.forEach((img, idx) => {
+      const imgEl = document.createElement('img');
+      imgEl.src = img;
+      imgEl.onclick = () => displayImage(idx);
+      imgEl.onerror = function() { this.src = 'https://via.placeholder.com/80x80?text=Error'; };
+      if (idx === 0) imgEl.classList.add('active');
+      gallery.appendChild(imgEl);
+    });
+  }
+
+  function displayImage(idx) {
+    currentImageIndex = Math.max(0, Math.min(idx, images.length - 1));
+    const mainImg = document.getElementById('mainImage');
+    mainImg.src = images[currentImageIndex];
+    mainImg.onerror = function() { this.src = 'https://via.placeholder.com/800x450?text=Error'; };
+    document.getElementById('imageCounter').textContent = currentImageIndex + 1;
+
+    document.querySelectorAll('.image-gallery img').forEach((el, i) => {
+      el.classList.toggle('active', i === currentImageIndex);
+    });
+  }
+
+  function prevImage() {
+    displayImage(currentImageIndex - 1);
+  }
+
+  function nextImage() {
+    displayImage(currentImageIndex + 1);
+  }
+
+  const userLoggedIn = document.getElementById('isUserLoggedIn')?.value === '1';
+
+  function buyNow(id) {
+    if (!userLoggedIn) {
+      window.location.href = '/auth/dang-nhap';
+      return;
+    }
+    window.location.href = '/khachhang?xe=' + id;
+  }
+
   function bookTestDrive(id) {
+    if (!userLoggedIn) {
+      window.location.href = '/auth/dang-nhap';
+      return;
+    }
     window.location.href = '/api/lichhen/them?xe=' + id;
   }
+
+  function callSeller(phone) {
+    window.location.href = 'tel:' + phone;
+  }
+
+  function messageSeller() {
+    if (!userLoggedIn) {
+      window.location.href = '/auth/dang-nhap';
+      return;
+    }
+    alert('Tính năng nhắn tin sẽ sớm được cập nhật');
+  }
+
+  document.addEventListener('DOMContentLoaded', initImages);
 </script>
 
 <%- include('../footer.ejs') %>

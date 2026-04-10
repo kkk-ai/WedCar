@@ -1,0 +1,352 @@
+<%- include('../header.ejs') %>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+        padding: 20px;
+    }
+
+    .auth-form {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .auth-form h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #555;
+        font-size: 14px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #f5576c;
+        box-shadow: 0 0 8px rgba(245, 87, 108, 0.3);
+    }
+
+    .form-group input::placeholder {
+        color: #999;
+    }
+
+    .error-message {
+        color: #d32f2f;
+        font-size: 13px;
+        margin-top: 5px;
+        display: none;
+    }
+
+    .error-message.show {
+        display: block;
+    }
+
+    .success-message {
+        background: #e8f5e9;
+        border-left: 4px solid #4caf50;
+        padding: 15px;
+        border-radius: 5px;
+        color: #2e7d32;
+        margin-bottom: 15px;
+        display: none;
+        font-size: 14px;
+    }
+
+    .success-message.show {
+        display: block;
+    }
+
+    .info-message {
+        background: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        padding: 12px;
+        border-radius: 5px;
+        color: #1565c0;
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: opacity 0.3s;
+        margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+        opacity: 0.9;
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .loading-spinner {
+        display: none;
+        text-align: center;
+        margin: 10px 0;
+    }
+
+    .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #f5576c;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .step {
+        display: none;
+    }
+
+    .step.active {
+        display: block;
+    }
+
+    .back-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .back-link a {
+        color: #f5576c;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .back-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-form">
+        <h2>🔑 Quên Mật Khẩu?</h2>
+
+        <div class="success-message" id="successMessage"></div>
+
+        <!-- Bước 1: Nhập Email -->
+        <div class="step active" id="step1">
+            <div class="info-message">
+                📧 Nhập email đăng ký để đặt lại mật khẩu
+            </div>
+            <form id="formStep1">
+                <div class="form-group">
+                    <label for="forgotEmail">Email:</label>
+                    <input type="email" id="forgotEmail" name="forgotEmail" placeholder="Nhập email của bạn" required>
+                    <div class="error-message" id="errorStep1"></div>
+                </div>
+                <div class="loading-spinner" id="loadingStep1">
+                    <div class="spinner"></div>
+                </div>
+                <button type="submit" class="btn-submit">✅ Tiếp Tục</button>
+            </form>
+        </div>
+
+        <!-- Bước 2: Nhập Mật Khẩu Mới -->
+        <div class="step" id="step2">
+            <div class="info-message">
+                🔐 Nhập mật khẩu mới cho tài khoản của bạn
+            </div>
+            <form id="formStep2">
+                <div class="form-group">
+                    <label for="newPassword">Mật Khẩu Mới:</label>
+                    <input type="password" id="newPassword" name="newPassword" placeholder="Nhập mật khẩu mới" required minlength="6">
+                    <div class="error-message" id="errorPassword"></div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác Nhận Mật Khẩu:</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Xác nhận mật khẩu" required minlength="6">
+                    <div class="error-message" id="errorConfirm"></div>
+                </div>
+                <div class="error-message" id="errorStep2"></div>
+                <div class="loading-spinner" id="loadingStep2">
+                    <div class="spinner"></div>
+                </div>
+                <button type="submit" class="btn-submit">✅ Cập Nhật Mật Khẩu</button>
+            </form>
+        </div>
+
+        <div class="back-link">
+            <a href="/auth/dang-nhap">← Quay lại đăng nhập</a>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    const formStep1 = document.getElementById('formStep1');
+    const formStep2 = document.getElementById('formStep2');
+    let currentUserEmail = null;
+
+    // Step 1: Email verification
+    formStep1.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const forgotEmail = document.getElementById('forgotEmail').value.trim();
+        const errorStep1 = document.getElementById('errorStep1');
+        const loadingStep1 = document.getElementById('loadingStep1');
+
+        errorStep1.classList.remove('show');
+        errorStep1.textContent = '';
+
+        if (!forgotEmail) {
+            errorStep1.textContent = 'Vui lòng nhập email';
+            errorStep1.classList.add('show');
+            return;
+        }
+
+        loadingStep1.style.display = 'block';
+        formStep1.querySelector('.btn-submit').disabled = true;
+
+        try {
+            const response = await fetch('/auth/check-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: forgotEmail })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                currentUserEmail = forgotEmail;
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+            } else {
+                errorStep1.textContent = data.message || 'Email không tồn tại';
+                errorStep1.classList.add('show');
+            }
+        } catch (error) {
+            errorStep1.textContent = 'Lỗi: ' + error.message;
+            errorStep1.classList.add('show');
+        } finally {
+            loadingStep1.style.display = 'none';
+            formStep1.querySelector('.btn-submit').disabled = false;
+        }
+    });
+
+    // Step 2: Reset password
+    formStep2.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorPassword = document.getElementById('errorPassword');
+        const errorConfirm = document.getElementById('errorConfirm');
+        const errorStep2 = document.getElementById('errorStep2');
+        const loadingStep2 = document.getElementById('loadingStep2');
+        const successMessage = document.getElementById('successMessage');
+
+        errorPassword.classList.remove('show');
+        errorPassword.textContent = '';
+        errorConfirm.classList.remove('show');
+        errorConfirm.textContent = '';
+        errorStep2.classList.remove('show');
+        errorStep2.textContent = '';
+
+        if (!newPassword) {
+            errorPassword.textContent = 'Vui lòng nhập mật khẩu mới';
+            errorPassword.classList.add('show');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            errorPassword.textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+            errorPassword.classList.add('show');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            errorConfirm.textContent = 'Mật khẩu xác nhận không trùng khớp';
+            errorConfirm.classList.add('show');
+            return;
+        }
+
+        loadingStep2.style.display = 'block';
+        formStep2.querySelector('.btn-submit').disabled = true;
+
+        try {
+            const response = await fetch('/auth/reset-password-new', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: currentUserEmail,
+                    newPassword: newPassword
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                successMessage.textContent = '✅ Mật khẩu đã được cập nhật thành công!';
+                successMessage.classList.add('show');
+                
+                setTimeout(() => {
+                    window.location.href = '/auth/dang-nhap';
+                }, 2000);
+            } else {
+                errorStep2.textContent = data.message || 'Không thể cập nhật mật khẩu';
+                errorStep2.classList.add('show');
+            }
+        } catch (error) {
+            errorStep2.textContent = 'Lỗi: ' + error.message;
+            errorStep2.classList.add('show');
+        } finally {
+            loadingStep2.style.display = 'none';
+            formStep2.querySelector('.btn-submit').disabled = false;
+        }
+    });
+</script>

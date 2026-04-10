@@ -16,24 +16,26 @@
   <div class="container-fluid p-0">
     <%- include('navbar') %>
 
-    <section class="hero py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    
+
+    <section class="hero py-5" style="background: linear-gradient(135deg, #1f3b5b 55%);">
       <div class="container">
         <div class="text-center mb-4">
-          <h2 class="fw-bold text-uppercase">Tìm kiếm chiếc xe mơ ước của bạn</h2>
-          <p class="text-muted">Hơn 100+ mẫu xe đang chờ bạn khám phá</p>
+          <h2 class="fw-bold text-uppercase" style="color: white;">Tìm kiếm chiếc xe mơ ước của bạn</h2>
+          <p class="text-muted" style="color: rgba(255, 255, 255, 0.8);">Hơn 100+ mẫu xe đang chờ bạn khám phá</p>
         </div>
 
         <div class="bg-white rounded-4 border shadow-sm p-4 hero-search-box">
           <div class="d-flex flex-wrap justify-content-center gap-4 pb-4 border-bottom mb-4">
             <% const brands = [
-              { name: 'Toyota', img: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Toyota_logo.png' },
-              { name: 'Ford', img: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Ford_logo_flat.svg' },
-              { name: 'Kia', img: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Kia_logo.svg' },
-              { name: 'Hyundai', img: 'https://upload.wikimedia.org/wikipedia/commons/3/37/Hyundai_logo.svg' },
-              { name: 'Mitsubishi', img: 'https://upload.wikimedia.org/wikipedia/commons/8/8f/Mitsubishi-logo.png' },
-              { name: 'VinFast', img: 'https://upload.wikimedia.org/wikipedia/commons/e/e6/Vinfast_logo.svg' },
-              { name: 'Mazda', img: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Mazda_logo.png' },
-              { name: 'Honda', img: 'https://upload.wikimedia.org/wikipedia/commons/7/7a/Honda_logo.svg' }
+              { name: 'Toyota', img: '/images/logo/toyota.png' },
+              { name: 'Ford', img: '/images/logo/ford.png' },
+              { name: 'Kia', img: '/images/logo/kia.png' },
+              { name: 'Hyundai', img: '/images/logo/Hyundai.png' },
+              { name: 'Mitsubishi', img: '/images/logo/Mitsubishi.png' },
+              { name: 'VinFast', img: '/images/logo/VinFast.png' },
+              { name: 'Mazda', img: '/images/logo/Mazda.png' },
+              { name: 'Honda', img: '/images/logo/Honda.png' }
             ] %>
             <% brands.forEach(brand => { %>
               <div class="text-center brand-item" onclick="setBrandFilter('<%= brand.name %>')">
@@ -63,9 +65,6 @@
                 <div class="col-md-2">
                   <select id="brandFilter" class="form-select" onchange="filterCars()">
                     <option value="">Tất cả hãng</option>
-                    <option value="Toyota">Toyota</option>
-                    <option value="Ford">Ford</option>
-                    <option value="VinFast">VinFast</option>
                   </select>
                 </div>
                 <div class="col-md-2">
@@ -94,10 +93,19 @@
       </div>
     </section>
 
+
+    
+    
+
+
     <section class="container my-5">
-      <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="fw-bold m-0 border-start border-4 border-warning ps-3 mb-4" id="featuredTitle">⭐ XE NỔI BẬT</h4>
+      <div id="featuredCars" class="row g-4"></div>
+      <div class="d-flex justify-content-center mt-3" id="featuredPagination"></div>
+        
+      <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
         <h4 class="fw-bold m-0 border-start border-4 border-warning ps-3">DANH SÁCH XE</h4>
-        <div class="dropdown">
+          <div class="dropdown">
           <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">Sắp xếp</button>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="#" onclick="sortCars('low')">Giá: Thấp đến Cao</a></li>
@@ -105,7 +113,6 @@
           </ul>
         </div>
       </div>
-
       <div id="resultCards" class="row g-4"></div>
       <div class="d-flex justify-content-center mt-4" id="pagination"></div>
     </section>
@@ -113,14 +120,122 @@
     <%- include('footer') %>
   </div>
 
+  <!-- Chatbot Modal -->
+  <div class="modal fade" id="chatbotModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">🤖 Chatbot So Sánh Xe</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" style="height: 500px; overflow-y: auto; background: #f9f9f9;">
+          <div id="chatMessages" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="chat-message bot-message" style="align-self: flex-start;">
+              <div class="p-2 rounded" style="background: #e3f2fd; border-left: 4px solid #2196F3;">
+                <strong>Bot:</strong> Xin chào! Tôi có thể giúp bạn so sánh các mẫu xe. <br>
+                Ví dụ: "So sánh Toyota Camry và Honda Accord" hoặc "So sánh xe A và xe B"
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="d-flex gap-2 w-100">
+            <select id="carSelect1" class="form-select form-select-sm">
+              <option value="">-- Chọn xe thứ nhất --</option>
+            </select>
+            <select id="carSelect2" class="form-select form-select-sm">
+              <option value="">-- Chọn xe thứ hai --</option>
+            </select>
+            <button type="button" class="btn btn-primary btn-sm" onclick="compareSelectedCars()">So sánh</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Toggle Button -->
+  <button id="chatbotBtn" class="btn btn-primary rounded-circle" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; font-size: 24px; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" data-bs-toggle="modal" data-bs-target="#chatbotModal" title="Mở chatbot">
+    🤖
+  </button>
+
   <%- include('javascript') %>
 
   <script>
     const xeList = <%- JSON.stringify(xeList || []) %>;
     const userLoggedIn = <%- JSON.stringify(!!user) %>;
     let activePage = 1;
-    const itemsPerPage = 6;
+    let featuredPage = 1;
+    const itemsPerPage = 12;
+    const featuredPerPage = 3;
     let filteredData = [...xeList];
+
+    function renderFeaturedCars() {
+      const container = document.getElementById('featuredCars');
+      container.innerHTML = '';
+      
+      const featuredCars = xeList.filter(xe => xe.noiBat === true);
+
+      if (featuredCars.length === 0) {
+        container.innerHTML = '<div class="col-12 text-center py-4 text-muted">Không có xe nổi bật</div>';
+        document.getElementById('featuredPagination').innerHTML = '';
+        return;
+      }
+
+      const start = (featuredPage - 1) * featuredPerPage;
+      const pageItems = featuredCars.slice(start, start + featuredPerPage);
+
+      pageItems.forEach((xe, index) => {
+        const rawImage = xe.hinhAnh?.[0] || '';
+        const imageSrc = rawImage
+          ? /(^https?:\/\/|^\/)/i.test(rawImage)
+            ? rawImage
+            : '/images/' + rawImage.replace(/^\/+/, '')
+          : '/images/no-car.jpg';
+
+        container.innerHTML += `
+          <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 car-detail-card" style="cursor:pointer; position: relative;" onclick="window.location.href='/api/xe/chi-tiet/${xe._id}'">
+              <span class="position-absolute top-0 start-0 badge bg-warning text-dark m-2">⭐ </span>
+              <img src="${imageSrc}" class="card-img-top" style="height:200px; object-fit:cover;">
+              <div class="card-body">
+                <h6 class="text-primary fw-bold text-uppercase small">${xe.hangXe}</h6>
+                <h5 class="fw-bold">${xe.tenXe}</h5>
+                <p class="text-danger fw-bold fs-5">${new Intl.NumberFormat('vi-VN').format(xe.giaBan)} đ</p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <span class="badge bg-light text-dark">${xe.namSanXuat || 2024}</span>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-success btn-sm" onclick="event.stopPropagation(); buyNow('${xe._id}')">Mua ngay</button>
+                    <button class="btn btn-info btn-sm" onclick="event.stopPropagation(); bookTestDrive('${xe._id}')">Đặt lịch xem</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      renderFeaturedPagination(featuredCars.length);
+    }
+
+    function renderFeaturedPagination(total) {
+      const paginContainer = document.getElementById('featuredPagination');
+      const totalPages = Math.ceil(total / featuredPerPage);
+      paginContainer.innerHTML = '';
+
+      if (totalPages <= 1) return;
+
+      for(let i=1; i<=totalPages; i++) {
+        paginContainer.innerHTML += `
+          <button class="btn btn-sm ${i === featuredPage ? 'btn-warning' : 'btn-outline-secondary'} mx-1" 
+                  onclick="changeFeaturedPage(${i})">${i}</button>
+        `;
+      }
+    }
+
+    function changeFeaturedPage(page) {
+      featuredPage = page;
+      renderFeaturedCars();
+    }
 
     function renderCars() {
       const container = document.getElementById('resultCards');
@@ -134,7 +249,7 @@
         return;
       }
 
-      pageItems.forEach(xe => {
+      pageItems.forEach((xe, index) => {
         const rawImage = xe.hinhAnh?.[0] || '';
         const imageSrc = rawImage
           ? /(^https?:\/\/|^\/)/i.test(rawImage)
@@ -189,12 +304,27 @@
       const p = document.getElementById('priceRange').value;
       const f = document.getElementById('fuelFilter').value;
       const t = document.getElementById('transmissionFilter').value;
+
+      // Check if any filter is active
+      const hasFilter = s !== '' || b !== '' || p !== '' || f !== '' || t !== '';
+      const featuredContainer = document.getElementById('featuredCars');
+      const featuredTitle = document.getElementById('featuredTitle');
       
+      // Hide featured cars section when filters are applied
+      if (hasFilter) {
+        featuredTitle.style.display = 'none';
+        featuredContainer.style.display = 'none';
+        document.getElementById('featuredPagination').style.display = 'none';
+      } else {
+        featuredTitle.style.display = '';
+        featuredContainer.style.display = '';
+        document.getElementById('featuredPagination').style.display = '';
+      }
 
       filteredData = xeList.filter(item => {
         const matchSearch = item.tenXe.toLowerCase().includes(s);
         const matchBrand = b === "" || item.hangXe === b;
-        const matchFuel = f === "" || item.loaiNhienLieu === f;
+        const matchFuel = f === "" || item.nhienLieu === f;
         const matchTrans = t === "" || item.hopSo === t;
 
         let matchPrice = true;
@@ -236,7 +366,308 @@
       window.location.href = '/api/lichhen/them?xe=' + id;
     }
 
-    document.addEventListener('DOMContentLoaded', renderCars);
+    document.addEventListener('DOMContentLoaded', () => {
+      // Dynamically populate brand filter with all brands
+      const brandSelect = document.getElementById('brandFilter');
+      const uniqueBrands = [...new Set(xeList.map(xe => xe.hangXe))];
+      uniqueBrands.forEach(brand => {
+        const option = document.createElement('option');
+        option.value = brand;
+        option.textContent = brand;
+        brandSelect.appendChild(option);
+      });
+      
+      renderFeaturedCars();
+      renderCars();
+      initBannerCarousel();
+      
+      // Populate car select options
+      populateCarSelects();
+      
+      // Setup chatbot modal show event
+      const chatbotModal = document.getElementById('chatbotModal');
+      if (chatbotModal) {
+        chatbotModal.addEventListener('show.bs.modal', () => {
+          populateCarSelects();
+        });
+      }
+    });
+
+    // Banner Carousel Functionality
+    let currentBannerIndex = 0;
+    const totalBanners = 5;
+    let bannerAutoPlayInterval;
+
+    function goToBanner(index) {
+      currentBannerIndex = index;
+      updateBannerDisplay();
+      resetAutoPlay();
+    }
+
+    function nextBanner() {
+      currentBannerIndex = (currentBannerIndex + 1) % totalBanners;
+      updateBannerDisplay();
+    }
+
+    function updateBannerDisplay() {
+      const slides = document.querySelectorAll('.banner-slide');
+      const dots = document.querySelectorAll('.banner-dot');
+
+      slides.forEach((slide, index) => {
+        if (index === currentBannerIndex) {
+          slide.style.opacity = '1';
+          slide.style.zIndex = '10';
+        } else {
+          slide.style.opacity = '0';
+          slide.style.zIndex = '0';
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        if (index === currentBannerIndex) {
+          dot.style.background = '#ffc107';
+        } else {
+          dot.style.background = 'rgba(255, 255, 255, 0.6)';
+        }
+      });
+    }
+
+    function resetAutoPlay() {
+      clearInterval(bannerAutoPlayInterval);
+      bannerAutoPlayInterval = setInterval(nextBanner, 5000);
+    }
+
+    function initBannerCarousel() {
+      bannerAutoPlayInterval = setInterval(nextBanner, 5000);
+    }
+
+    // ===== CHATBOT FUNCTIONALITY =====
+    function populateCarSelects() {
+      const select1 = document.getElementById('carSelect1');
+      const select2 = document.getElementById('carSelect2');
+      
+      if (!select1 || !select2 || xeList.length === 0) return;
+      
+      // Lưu giá trị hiện tại
+      const currentValue1 = select1.value;
+      const currentValue2 = select2.value;
+      
+      // Xóa các option cũ (giữ lại mục mặc định)
+      select1.innerHTML = '<option value="">-- Chọn xe thứ nhất --</option>';
+      select2.innerHTML = '<option value="">-- Chọn xe thứ hai --</option>';
+      
+      // Thêm xe vào select
+      xeList.forEach((car, index) => {
+        const displayName = `${car.hangXe} ${car.tenXe}`;
+        
+        const option1 = document.createElement('option');
+        option1.value = car._id;
+        option1.textContent = displayName;
+        option1.selected = car._id === currentValue1;
+        select1.appendChild(option1);
+        
+        const option2 = document.createElement('option');
+        option2.value = car._id;
+        option2.textContent = displayName;
+        option2.selected = car._id === currentValue2;
+        select2.appendChild(option2);
+      });
+    }
+
+    function compareSelectedCars() {
+      const select1 = document.getElementById('carSelect1');
+      const select2 = document.getElementById('carSelect2');
+      
+      const car1Id = select1.value;
+      const car2Id = select2.value;
+      
+      if (!car1Id || !car2Id) {
+        addChatMessage('⚠️ Vui lòng chọn 2 xe để so sánh', 'bot');
+        return;
+      }
+      
+      if (car1Id === car2Id) {
+        addChatMessage('⚠️ Vui lòng chọn 2 xe khác nhau', 'bot');
+        return;
+      }
+      
+      // Hiển thị xe được chọn
+      const car1Name = document.querySelector(`#carSelect1 option[value="${car1Id}"]`).textContent;
+      const car2Name = document.querySelector(`#carSelect2 option[value="${car2Id}"]`).textContent;
+      
+      addChatMessage(`Đang so sánh: ${car1Name} và ${car2Name}...`, 'user');
+      
+      // Gọi API so sánh
+      compareCarsChatbot([car1Id, car2Id]);
+    }
+
+    function addChatMessage(text, sender = 'user') {
+      const messagesDiv = document.getElementById('chatMessages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `chat-message ${sender}-message`;
+      messageDiv.style.alignSelf = sender === 'user' ? 'flex-end' : 'flex-start';
+      
+      const bgColor = sender === 'user' ? '#c8e6c9' : '#e3f2fd';
+      const borderColor = sender === 'user' ? '#4caf50' : '#2196F3';
+      
+      messageDiv.innerHTML = `
+        <div class="p-2 rounded" style="background: ${bgColor}; border-left: 4px solid ${borderColor}; max-width: 80%;">
+          <strong>${sender === 'user' ? 'Bạn' : 'Bot'}:</strong> ${text}
+        </div>
+      `;
+      
+      messagesDiv.appendChild(messageDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function displayComparisonTable(cars) {
+      const messagesDiv = document.getElementById('chatMessages');
+      const comparisonDiv = document.createElement('div');
+      comparisonDiv.style.marginTop = '10px';
+      
+      let tableHTML = `
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered" style="font-size: 13px;">
+            <thead class="table-warning">
+              <tr>
+                <th>Thông Tin</th>
+                ${cars.map(car => `<th>${car.tenXe}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Hãng xe</strong></td>
+                ${cars.map(car => `<td>${car.hangXe || 'N/A'}</td>`).join('')}
+              </tr>
+              <tr>
+                <td><strong>Loại xe</strong></td>
+                ${cars.map(car => `<td>${car.loaiXe || 'N/A'}</td>`).join('')}
+              </tr>
+              <tr>
+                <td><strong>Giá bán</strong></td>
+                ${cars.map(car => `<td class="text-danger fw-bold">${new Intl.NumberFormat('vi-VN').format(car.giaBan)} đ</td>`).join('')}
+              </tr>
+              <tr>
+                <td><strong>Năm sản xuất</strong></td>
+                ${cars.map(car => `<td>${car.namSanXuat || 'N/A'}</td>`).join('')}
+              </tr>
+              <tr>
+                <td><strong>Nhiên liệu</strong></td>
+                ${cars.map(car => `<td>${car.nhienLieu || 'N/A'}</td>`).join('')}
+              </tr>
+              <tr>
+                <td><strong>Hộp số</strong></td>
+                ${cars.map(car => `<td>${car.hopSo === 'SoSan' ? 'Số sàn' : (car.hopSo === 'SoTuDong' ? 'Số tự động' : 'N/A')}</td>`).join('')}
+              </tr>
+              <tr>
+                <td><strong>Màu sắc</strong></td>
+                ${cars.map(car => `<td>${car.mauSac || 'N/A'}</td>`).join('')}
+              </tr>
+              <tr>
+                <td><strong>Số lượng tồn</strong></td>
+                ${cars.map(car => `<td>${car.soLuongTon || 0}</td>`).join('')}
+              </tr>
+              <tr>
+                <td><strong>Mô tả</strong></td>
+                ${cars.map(car => `<td style="font-size: 12px;">${(car.moTa || 'N/A').substring(0, 50)}...</td>`).join('')}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+      
+      comparisonDiv.innerHTML = tableHTML;
+      messagesDiv.appendChild(comparisonDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      
+      if (!message) return;
+      
+      addChatMessage(message, 'user');
+      input.value = '';
+      
+      // Phân tích lệnh
+      const lowerMsg = message.toLowerCase();
+      
+      // Tìm từ khóa so sánh
+      if (lowerMsg.includes('so sánh') || lowerMsg.includes('compare')) {
+        // Trích xuất tên xe từ message
+        const carNameRegex = /so sánh\s+(.+)\s+và\s+(.+)(?:\s*\?)?|compare\s+(.+)\s+and\s+(.+)/i;
+        const match = message.match(carNameRegex);
+        
+        if (match) {
+          const car1 = match[1] || match[3];
+          const car2 = match[2] || match[4];
+          
+          compareCarsChatbot([car1.trim(), car2.trim()]);
+        } else {
+          // Thử tách tên xe từ dấu phẩy hoặc "và"
+          const parts = message.replace(/so sánh\s+/i, '').replace(/compare\s+/i, '')
+            .split(/,|và|and/i).map(p => p.trim()).filter(p => p);
+          
+          if (parts.length >= 2) {
+            compareCarsChatbot(parts.slice(0, 5)); // Tối đa 5 xe
+          } else {
+            addChatMessage('🤔 Tôi không hiểu rõ. Vui lòng nhập theo format: "So sánh Toyota Camry và Honda Accord"', 'bot');
+          }
+        }
+      } else {
+        addChatMessage('😊 Tôi chỉ hỗ trợ so sánh xe. Hãy nhập: "So sánh [tên xe 1] và [tên xe 2]"', 'bot');
+      }
+    }
+
+    function compareCarsChatbot(carNames) {
+      fetch('/api/xe/api/compare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ carNames: carNames })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.comparison && data.comparison.length >= 2) {
+          addChatMessage(`✅ Tìm thấy ${data.comparison.length} xe! Dưới đây là bảng so sánh:`, 'bot');
+          displayComparisonTable(data.comparison);
+        } else if (data.comparison && data.comparison.length === 1) {
+          addChatMessage(`⚠️ Chỉ tìm thấy 1 xe. Cần ít nhất 2 xe để so sánh.`, 'bot');
+        } else {
+          addChatMessage(`❌ ${data.message}. Hãy thử tên khác.`, 'bot');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        addChatMessage('❌ Lỗi kết nối. Vui lòng thử lại.', 'bot');
+      });
+    }
+
+    // Xử lý Enter key
+    // Đã setup ở trên trong DOMContentLoaded
+    
+    function compareCarsChatbot(carIds) {
+      fetch('/api/xe/api/compare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ carNames: carIds })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.comparison && data.comparison.length >= 2) {
+          addChatMessage(`✅ Bảng so sánh chi tiết:`, 'bot');
+          displayComparisonTable(data.comparison);
+        } else if (data.comparison && data.comparison.length === 1) {
+          addChatMessage(`⚠️ Chỉ tìm thấy 1 xe. Cần ít nhất 2 xe để so sánh.`, 'bot');
+        } else {
+          addChatMessage(`❌ ${data.message}. Vui lòng chọn xe khác.`, 'bot');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        addChatMessage('❌ Lỗi kết nối. Vui lòng thử lại.', 'bot');
+      });
+    }
   </script>
 </body>
 </html>

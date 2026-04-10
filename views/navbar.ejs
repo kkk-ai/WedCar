@@ -1,4 +1,5 @@
 <style>
+    
     .navbar-carmudi {
         background-color: white !important;
         border-bottom: 1px solid #eee;
@@ -55,9 +56,30 @@ function dangXuat() {
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-carmudi">
+    <!-- <div class="banner-carousel position-relative" style="overflow: hidden; width: 100%; height: 120px; background: #f5f5f5;">
+      <div class="carousel-container position-relative" style="width: 100%; height: 100%;">
+        <% const banners = [
+          { id: 1, img: '/images/logo/banner1.png' },
+          { id: 2, img: '/images/logo/banner2.png' },
+          { id: 3, img: '/images/logo/banner3.png' },
+          { id: 4, img: '/images/logo/banner4.png' },
+          { id: 5, img: '/images/logo/banner5.png' }
+        ] %>
+        <% banners.forEach((banner, index) => { %>
+          <img src="<%= banner.img %>" alt="Banner <%= banner.id %>" class="banner-slide" style="position: absolute; width: 100%; height: 100%; object-fit: contain; opacity: <%= index === 0 ? 1 : 0 %>; transition: opacity 0.8s ease-in-out;" />
+        <% }) %>
+      </div>
+
+       //Banner Navigation Dots 
+      <div style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); z-index: 20; display: flex; gap: 8px;">
+        <% for (let i = 0; i < 5; i++) { %>
+          <div class="banner-dot" onclick="goToBanner(<%= i %>)" style="width: 12px; height: 12px; border-radius: 50%; background: <%= i === 0 ? '#ffc107' : 'rgba(255, 255, 255, 0.6)' %>; cursor: pointer; transition: all 0.3s ease; border: 2px solid white;"></div>
+        <% } %>
+      </div>
+    </div> -->
     <div class="container-fluid">
         <a class="navbar-brand" href="/">
-            <img src="https://static.carmudi.vn/wp-content/uploads/2021/03/logo-carmudi.png" alt="Carmudi Logo">
+            <img src="/images/logo/logo.png" alt="Carmudi Logo"> 
         </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
@@ -66,27 +88,21 @@ function dangXuat() {
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Mua xe</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/ban-xe">Bán xe</a>
-                </li>
+                
+                
                 <li class="nav-item">
                     <a class="nav-link" href="/gioi-thieu">Giới thiệu</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/tin-tuc">Tin tức</a>
+                    <a class="nav-link" href="/huong-dan">Hướng dẫn</a>
                 </li>
             </ul>
 
             <div class="d-flex align-items-center">
-                <a href="/baiviet/them" class="btn btn-dang-tin me-3">
-                    <i class="bi bi-car-front-fill"></i> ĐĂNG TIN
-                </a>
+               
 
                 <a href="tel:0938119439" class="contact-info d-none d-xl-block">
-                    <i class="bi bi-telephone"></i> 0938119439
+                    <i class="bi bi-telephone"> </i>Liên hệ: 0938119439
                 </a>
 
                 <ul class="navbar-nav me-3">
@@ -96,6 +112,12 @@ function dangXuat() {
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/api/donhang">🧾 Đơn hàng</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/api/cuahang">🏪 Cửa hàng</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/api/xe">🚗 Xe</a>
                         </li>
                     <% } %>
                 </ul>
@@ -107,9 +129,8 @@ function dangXuat() {
                                 <i class="bi bi-person-circle"></i> <%= user.hoTen %>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/taikhoan/hoso">👤 Hồ sơ cá nhân</a></li>
-                                <li><a class="dropdown-item" href="/baiviet/cuatoi">📄 Bài viết của tôi</a></li>
-                                <li><a class="dropdown-item" href="/liked">❤️ Yêu thích</a></li>
+                                <li><a class="dropdown-item" href="/khachhang">👤 Hồ sơ cá nhân</a></li>
+                                
                                 <% if (user.quyenHan === 'quanTri') { %>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="/admin">⚙️ Quản lý Admin</a></li>

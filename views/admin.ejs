@@ -2,101 +2,240 @@
 <html lang="vi">
 <head>
   <%- include('header') %>
-</head>
-<body>
-  <div class="container mt-3">
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      min-height: 100vh;
+      padding-top: 20px;
+    }
+
+    .admin-header {
+      background: linear-gradient(135deg, #FFC107 0%, #1a1a1a 100%);
+      color: #1a1a1a;
+      padding: 40px 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
+    }
+
+    .admin-header h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #1a1a1a;
+    }
+
+    .admin-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin: 0;
+      color: #1a1a1a;
+    }
+
+    .stats-section {
+      background: #2d2d2d;
+      padding: 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 20px rgba(255, 193, 7, 0.15);
+      border: 2px solid #FFC107;
+    }
+
+    .stats-section h5 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 25px;
+      color: #FFC107;
+    }
+
+    .stat-card {
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      margin-bottom: 15px;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+    }
+
+    .stat-card h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+      margin-bottom: 10px;
+    }
+
+    .stat-card span {
+      font-size: 0.95rem;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
+    .stat-users { background: linear-gradient(135deg, #FFC107 0%, #FF9500 100%); color: #1a1a1a; border-color: #FFC107; }
     
 
-    <div class="card mb-3">
-      <div class="card-header bg-gradient-primary text-white">
-        <h2><i class="bi bi-speedometer2"></i> Bảng điều khiển Admin</h2>
-        <p class="mb-0">Chào mừng <strong><%= user?.hoTen %></strong> đến trang quản trị.</p>
-      </div>
-      <div class="card-body">
-        <div class="row gy-3">
-          <div class="col-lg-4 col-md-6">
-            <a href="/api/nguoidung" class="text-decoration-none">
-              <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                  <h5 class="card-title">Người dùng</h5>
-                  <p class="card-text">Thêm, sửa, xóa người dùng.</p>
-                </div>
-              </div>
-            </a>
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .menu-card {
+      background: #1a1a1a;
+      border-radius: 15px;
+      overflow: hidden;
+      text-decoration: none;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s ease;
+      position: relative;
+      height: 100%;
+      border: 2px solid #FFC107;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(255, 193, 7, 0.3);
+      text-decoration: none;
+      border-color: #FFD700;
+    }
+
+    .menu-card-header {
+      padding: 30px 20px;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .menu-card:nth-child(1) .menu-card-header { background: linear-gradient(135deg, #FFD54F 0%, #FF9500 100%); border-bottom-color: #FF9500; color: #1a1a1a; }
+    .menu-card:nth-child(2) .menu-card-header { background: linear-gradient(135deg, #FFD54F 0%, #FBC02D 100%); border-bottom-color: #FBC02D; color: #1a1a1a; }
+    .menu-card:nth-child(3) .menu-card-header { background: linear-gradient(135deg, #FFD54F 0%, #FFA000 100%); border-bottom-color: #FFA000; color: #1a1a1a; }
+    .menu-card:nth-child(4) .menu-card-header { background: linear-gradient(135deg, #FFD54F 0%, #FF8F00 100%); border-bottom-color: #FF8F00; color: #1a1a1a; }
+    .menu-card:nth-child(5) .menu-card-header { background: linear-gradient(135deg, #FFD54F 0%, #FF9500 100%); border-bottom-color: #FF9500; color: #1a1a1a; }
+    .menu-card:nth-child(6) .menu-card-header { background: linear-gradient(135deg, #FFD54F 0%, #FBC02D 100%); border-bottom-color: #FBC02D; color: #1a1a1a; }
+
+    .menu-card-body {
+      padding: 25px;
+    }
+
+    .menu-card h5 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #FFC107;
+      margin-bottom: 10px;
+    }
+
+    .menu-card p {
+      color: #ccc;
+      font-size: 0.95rem;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+    }
+  </style>
+</head>
+<%- include('navbar') %>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="admin-header">
+      <h2><i class="bi bi-speedometer2"></i> Bảng Điều Khiển Admin</h2>
+      <p>Chào mừng <strong><%= user?.hoTen %></strong> đến trang quản trị WedCar</p>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="stats-section">
+      <h5><i class="bi bi-bar-chart"></i> Thống Kê Nhanh</h5>
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card stat-users">
+            <h3 id="totalUsers">...</h3>
+            <span><i class="bi bi-people"></i> Người Dùng</span>
           </div>
-          <div class="col-lg-12">
-            <div class="card mb-3 px-3 py-3">
-              <h5 class="fw-bold">Thống kê nhanh</h5>
-              <div class="row">
-                <div class="col-md-3">
-                  <div class="p-3 bg-light rounded-2 text-center">
-                    <h3 id="totalUsers">...</h3>
-                    <span>Người dùng</span>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="p-3 bg-light rounded-2 text-center">
-                    <h3 id="totalVehicles">...</h3>
-                    <span>Xe</span>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="p-3 bg-light rounded-2 text-center">
-                    <h3 id="totalOrders">...</h3>
-                    <span>Đơn hàng</span>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="p-3 bg-light rounded-2 text-center">
-                    <h3 id="pendingAppointments">...</h3>
-                    <span>Lịch hẹn chờ</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card stat-users">
+            <h3 id="totalVehicles">...</h3>
+            <span><i class="bi bi-car-front"></i> Xe</span>
           </div>
-          <div class="col-lg-4 col-md-6">
-            <a href="/api/cuahang" class="text-decoration-none">
-              <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                  <h5 class="card-title">Cửa hàng</h5>
-                  <p class="card-text">Quản lý chi nhánh và thông tin cửa hàng.</p>
-                </div>
-              </div>
-            </a>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card stat-users">
+            <h3 id="totalOrders">...</h3>
+            <span><i class="bi bi-receipt"></i> Đơn Hàng</span>
           </div>
-          <div class="col-lg-4 col-md-6">
-            <a href="/api/xe" class="text-decoration-none">
-              <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                  <h5 class="card-title">Xe</h5>
-                  <p class="card-text">Quản lý kho xe, thêm mới và cập nhật thông số.</p>
-                </div>
-              </div>
-            </a>
-          </div>
-          <div class="col-lg-4 col-md-6">
-            <a href="/api/lichhen" class="text-decoration-none">
-              <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                  <h5 class="card-title">Lịch hẹn</h5>
-                  <p class="card-text">Xem và xử lý lịch hẹn khách.</p>
-                </div>
-              </div>
-            </a>
-          </div>
-          <div class="col-lg-4 col-md-6">
-            <a href="/api/donhang" class="text-decoration-none">
-              <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                  <h5 class="card-title">Đơn hàng</h5>
-                  <p class="card-text">Theo dõi đơn, cập nhật trạng thái và doanh thu.</p>
-                </div>
-              </div>
-            </a>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card stat-users">
+            <h3 id="pendingAppointments">...</h3>
+            <span><i class="bi bi-calendar-check"></i> Lịch Hẹn Chờ</span>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Menu Section -->
+    <div class="stats-section">
+      <h5><i class="bi bi-collection"></i> Quản Trị Hệ Thống</h5>
+      <div class="menu-grid">
+        <a href="/api/nguoidung" class="menu-card">
+          <div class="menu-card-header">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <div class="menu-card-body">
+            <h5>Người Dùng</h5>
+            <p>Thêm, sửa, xóa người dùng trong hệ thống.</p>
+          </div>
+        </a>
+        <a href="/api/xe" class="menu-card">
+          <div class="menu-card-header">
+            <i class="bi bi-car-front-fill"></i>
+          </div>
+          <div class="menu-card-body">
+            <h5>Quản Lý Xe</h5>
+            <p>Quản lý kho xe, thêm mới và cập nhật thông số.</p>
+          </div>
+        </a>
+        <a href="/api/cuahang" class="menu-card">
+          <div class="menu-card-header">
+            <i class="bi bi-shop"></i>
+          </div>
+          <div class="menu-card-body">
+            <h5>Cửa Hàng</h5>
+            <p>Quản lý chi nhánh và thông tin cửa hàng.</p>
+          </div>
+        </a>
+        <a href="/api/lichhen" class="menu-card">
+          <div class="menu-card-header">
+            <i class="bi bi-calendar2-check"></i>
+          </div>
+          <div class="menu-card-body">
+            <h5>Lịch Hẹn</h5>
+            <p>Xem và xử lý lịch hẹn khách hàng.</p>
+          </div>
+        </a>
+        <a href="/api/donhang" class="menu-card">
+          <div class="menu-card-header">
+            <i class="bi bi-bag-check-fill"></i>
+          </div>
+          <div class="menu-card-body">
+            <h5>Đơn Hàng</h5>
+            <p>Theo dõi đơn, cập nhật trạng thái và doanh thu.</p>
+          </div>
+        </a>
+      </div>
+    </div>
     </div>
 
     <%- include('footer') %>

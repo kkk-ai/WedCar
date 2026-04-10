@@ -17,6 +17,27 @@ const donHangSchema = new mongoose.Schema({
         }
     ],
     tongTien: Number,
+    thongTinKhachHang: {
+        hoTen: { type: String, required: true },
+        soDienThoai: { type: String, required: true },
+        soCanCuoc: { type: String, required: true },
+        maSoThue: { type: String, required: true }
+    },
+    hinhThucNhanXe: {
+        type: String,
+        enum: ['taiCuaHang', 'taiNha'],
+        default: 'taiCuaHang'
+    },
+    cuaHangNhanXe: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CuaHang'
+    },
+    thongTinNhanXeTaiNha: {
+        nguoiNhan: String,
+        soDienThoaiNhan: String,
+        diaChi: String,
+        ghiChu: String
+    },
     trangThai: {
         type: String,
         enum: ['ChoXacNhan', 'DangXuLy', 'HoanThanh', 'DaHuy'],
@@ -26,6 +47,10 @@ const donHangSchema = new mongoose.Schema({
         type: String,
         enum: ['COD', 'ZaloPay'],
         default: 'COD'
+    },
+    ghiChu: {
+        type: String,
+        default: ''
     },
     trangThaiThanhToan: {
         type: String,

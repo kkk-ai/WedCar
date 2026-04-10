@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <%- include('header') %>
+  <style>
+    .hero-section {
+      background: linear-gradient(135deg, #f58220 0%, #ff9f43 100%);
+      color: white;
+      padding: 80px 0;
+      text-align: center;
+    }
+    .hero-section h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .hero-section p {
+      font-size: 1.2rem;
+      margin-bottom: 0;
+    }
+    .guide-section {
+      padding: 60px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .guide-section:last-of-type {
+      border-bottom: none;
+    }
+    .section-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 40px;
+      border-left: 5px solid #f58220;
+      padding-left: 20px;
+    }
+    .step-card {
+      background: white;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 30px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+    }
+    .step-card:hover {
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+      transform: translateY(-2px);
+    }
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background: #f58220;
+      color: white;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .step-card h5 {
+      color: #333;
+      font-weight: bold;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+    .step-card p {
+      color: #666;
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+    .step-card ul {
+      color: #666;
+      line-height: 1.8;
+      margin-left: 20px;
+    }
+    .step-card li {
+      margin-bottom: 8px;
+    }
+    .tip-box {
+      background: #fff3e0;
+      border-left: 4px solid #f58220;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 5px;
+    }
+    .tip-box i {
+      color: #f58220;
+      margin-right: 10px;
+    }
+    .tip-box strong {
+      color: #333;
+    }
+    .faq-item {
+      background: white;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .faq-question {
+      background: #f8f9fa;
+      padding: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      color: #333;
+      transition: all 0.3s;
+    }
+    .faq-question:hover {
+      background: #f58220;
+      color: white;
+    }
+    .faq-question i {
+      transition: transform 0.3s;
+    }
+    .faq-question.active i {
+      transform: rotate(180deg);
+    }
+    .faq-answer {
+      padding: 20px;
+      color: #666;
+      line-height: 1.8;
+      display: none;
+    }
+    .faq-answer.show {
+      display: block;
+    }
+    .contact-box {
+      background: linear-gradient(135deg, #f58220 0%, #ff9f43 100%);
+      color: white;
+      padding: 40px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .contact-box h4 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .contact-box p {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+    .contact-box a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      border: 2px solid white;
+      padding: 10px 25px;
+      border-radius: 5px;
+      display: inline-block;
+      transition: all 0.3s;
+      margin: 0 10px;
+    }
+    .contact-box a:hover {
+      background: white;
+      color: #f58220;
+    }
+    .video-section {
+      background: #f8f9fa;
+      padding: 40px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 30px 0;
+    }
+    .video-section iframe {
+      max-width: 100%;
+      height: 500px;
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+    .feature-card {
+      text-align: center;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      transition: all 0.3s;
+    }
+    .feature-card:hover {
+      background: #f58220;
+      color: white;
+      transform: translateY(-5px);
+    }
+    .feature-card i {
+      font-size: 2.5rem;
+      color: #f58220;
+      margin-bottom: 15px;
+    }
+    .feature-card:hover i {
+      color: white;
+    }
+    .feature-card h6 {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .feature-card p {
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <%- include('navbar') %>
+
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="container">
+      <h1>📚 Hướng Dẫn Sử Dụng WedCar</h1>
+      <p>Mọi bước hướng dẫn chi tiết từ A đến Z cho khách hàng</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container mt-5">
+    
+    <!-- SECTION 1: Registration -->
+    <div class="guide-section">
+      <h2 class="section-title">1️⃣ Đăng Ký Tài Khoản</h2>
+      
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h5>Truy cập trang đăng ký</h5>
+        <p>Nhấp vào nút "<strong>Đăng Ký</strong>" ở góc trên cùng bên phải của trang.</p>
+        <div class="tip-box">
+          <i class="bi bi-info-circle"></i>
+          <strong>Lưu ý:</strong> Nếu bạn đã có tài khoản, hãy chọn "Đăng Nhập" thay vào đó.
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h5>Điền thông tin cá nhân</h5>
+        <p>Điền các thông tin sau:</p>
+        <ul>
+          <li><strong>Họ tên:</strong> Tên đầy đủ của bạn</li>
+          <li><strong>Email:</strong> Địa chỉ email hợp lệ (dùng để lấy lại mật khẩu)</li>
+          <li><strong>Số điện thoại:</strong> Số điện thoại liên lạc của bạn</li>
+          <li><strong>Mật khẩu:</strong> Tối thiểu 6 ký tự (nên kết hợp chữ, số, ký hiệu)</li>
+          <li><strong>Xác nhận mật khẩu:</strong> Nhập lại mật khẩu để chắc chắn</li>
+        </ul>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h5>Xác nhận và hoàn tất đăng ký</h5>
+        <p>Kiểm tra lại tất cả thông tin, sau đó nhấp nút "<strong>Đăng Ký</strong>" để hoàn tất.</p>
+        <p>✅ Bạn sẽ được chuyển hướng tới trang đăng nhập.</p>
+        <div class="tip-box">
+          <i class="bi bi-lightbulb"></i>
+          <strong>Mẹo:</strong> Hãy nhớ lại mật khẩu của bạn hoặc lưu nó ở nơi an toàn.
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Login -->
+    <div class="guide-section">
+      <h2 class="section-title">2️⃣ Đăng Nhập Vào Tài Khoản</h2>
+      
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h5>Truy cập trang đăng nhập</h5>
+        <p>Nhấp vào nút "<strong>Đăng Nhập</strong>" ở góc trên cùng bên phải.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h5>Nhập thông tin đăng nhập</h5>
+        <p>Nhập email hoặc số điện thoại và mật khẩu của bạn.</p>
+        <ul>
+          <li>Email/Số điện thoại: Thông tin bạn đã dùng khi đăng ký</li>
+          <li>Mật khẩu: Mật khẩu của bạn (lưu ý chữ hoa/thường)</li>
+        </ul>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h5>Đăng nhập và tiếp tục</h5>
+        <p>Nhấp nút "<strong>Đăng Nhập</strong>" để vào hệ thống.</p>
+        <div class="tip-box">
+          <i class="bi bi-question-circle"></i>
+          <strong>Quên mật khẩu?</strong> Nhấp vào "Quên mật khẩu?" và làm theo hướng dẫn về lấy lại mật khẩu.
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Browse Cars -->
+    <div class="guide-section">
+      <h2 class="section-title">3️⃣ Tìm Kiếm và Xem Xe</h2>
+      
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h5>Duyệt danh sách xe trên trang chủ</h5>
+        <p>Trên trang chủ, bạn sẽ thấy danh sách tất cả các xe có sẵn.</p>
+        <ul>
+          <li>Các xe được sắp xếp theo tên</li>
+          <li>Mỗi xe hiển thị: ảnh, tên, loại xe, giá bán</li>
+        </ul>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h5>Xem chi tiết xe</h5>
+        <p>Nhấp vào bất kỳ chiếc xe nào để xem:</p>
+        <ul>
+          <li>Ảnh chi tiết xe</li>
+          <li>Thông số kỹ thuật (hãng, năm sản xuất, số chỗ ngồi, dung tích)).</li>
+          <li>Mô tả chi tiết về điều kiện xe</li>
+          <li>Giá và các lựa chọn đặt lịch hẹn</li>
+          <li>Thông tin của cửa hàng chứa xe</li>
+        </ul>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h5>So sánh các xe</h5>
+        <p>Hãy mở nhiều xe trong các tab khác nhau để dễ dàng so sánh giữa chúng.</p>
+        <div class="tip-box">
+          <i class="bi bi-star"></i>
+          <strong>Mẹo:</strong> Hãy chọn xe phù hợp với nhu cầu của bạn (giá, kích thước, công năng).
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Book Appointment -->
+    <div class="guide-section">
+      <h2 class="section-title">4️⃣ Đặt Lịch Hẹn Xem Xe</h2>
+      
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h5>Chọn xe và nhấp "Đặt lịch hẹn"</h5>
+        <p>Sau khi xem chi tiết xe, nhấp nút "<strong>Đặt lịch hẹn</strong>" hoặc "<strong>Xem xe</strong>".</p>
+        <div class="tip-box">
+          <i class="bi bi-exclamation-triangle"></i>
+          <strong>Yêu cầu:</strong> Bạn cần <strong>đăng nhập</strong> để đặt lịch hẹn.
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h5>Chọn ngày và giờ</h5>
+        <p>Trên biểu mẫu đặt lịch, hãy chọn:</p>
+        <ul>
+          <li><strong>Ngày:</strong> Chọn ngày bạn muốn xem xe (chỉ những ngày có sẵn)</li>
+          <li><strong>Giờ:</strong> Chọn giờ phù hợp (theo múi giờ của cửa hàng)</li>
+          <li><strong>Ghi chú:</strong> Thêm bất kỳ yêu cầu hoặc câu hỏi nào</li>
+        </ul>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h5>Xác nhận đặt lịch</h5>
+        <p>Kiểm tra lại thông tin và nhấp "<strong>Xác nhận lịch hẹn</strong>".</p>
+        <p>✅ Bạn sẽ nhận được thông báo xác nhận qua email và SMS.</p>
+        <div class="tip-box">
+          <i class="bi bi-calendar2-check"></i>
+          <strong>Nhớ:</strong> Hãy đến đúng giờ hoặc liên hệ cửa hàng nếu bạn không thể đến.
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">4</div>
+        <h5>Theo dõi lịch hẹn của bạn</h5>
+        <p>Vào "<strong>Hồ sơ cá nhân</strong>" > "<strong>Lịch hẹn của tôi</strong>" để xem tất cả các lịch hẹn đang chờ xử lý.</p>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Purchase/Rental -->
+    <div class="guide-section">
+      <h2 class="section-title">5️⃣ Đặt Mua</h2>
+      
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h5>Quyết định mua</h5>
+        <p>Chọn phương thức mà bạn muốn:</p>
+        <ul>
+          <li>📦 <strong>Mua xe:</strong> Thanh toán một lần để sở hữu xe</li>
+         
+        </ul>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h5>Điền thông tin đơn hàng</h5>
+        <p>Trên trang đơn hàng, điền:</p>
+        <ul>
+          <li>Ngày bắt đầu (ngày nhận xe)</li>
+          <li>Ngày kết thúc (ngày trả xe nếu thuê)</li>
+          <li>Địa chỉ giao/nhận xe</li>
+          <li>Các yêu cầu đặc biệt (nếu có)</li>
+        </ul>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h5>Kiểm tra tổng giá</h5>
+        <p>Hệ thống sẽ tự động tính toán:</p>
+        <ul>
+          <li>Giá cơ bản (theo ngày hoặc lần)</li>
+          <li>Các phí bổ sung (giao xe, bảo hiểm, v.v.)</li>
+          <li>Tổng tiền cuối cùng</li>
+        </ul>
+        <div class="tip-box">
+          <i class="bi bi-percent"></i>
+          <strong>Khuyến mãi:</strong> Nếu có mã khuyến mãi, nhập vào trước khi thanh toán.
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">4</div>
+        <h5>Chọn phương thức thanh toán</h5>
+        <p>Có các lựa chọn thanh toán:</p>
+        <ul>
+          <li>💳 <strong>Thẻ tín dụng/Debit:</strong> Visa, Mastercard, v.v.</li>
+          <li>📱 <strong>Ví điện tử:</strong> ZaloPay</li>
+          <li>🏦 <strong>Chuyển khoản ngân hàng</li>
+        </ul>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">5</div>
+        <h5>Thanh toán và hoàn tất</h5>
+        <p>✅ Sau khi thanh toán thành công:</p>
+        <ul>
+          <li>Bạn sẽ nhận được email xác nhận đơn hàng</li>
+          <li>Trạng thái đơn hàng chuyển thành "Đã thanh toán"</li>
+          <li>Cửa hàng sẽ liên hệ để xác nhận giao xe</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION 6: Track Order -->
+    <div class="guide-section">
+      <h2 class="section-title">6️⃣ Theo Dõi Đơn Hàng</h2>
+      
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h5>Truy cập phần "Đơn hàng của tôi"</h5>
+        <p>Nhấp vào tên người dùng (góc trên phải) > "<strong>Hồ sơ cá nhân</strong>" > "<strong>Đơn hàng của tôi</strong>".</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h5>Xem trạng thái đơn hàng</h5>
+        <p>Mỗi đơn hàng sẽ hiển thị:</p>
+        <ul>
+          <li>🔵 <strong>Chờ xử lý:</strong> Cửa hàng đang kiểm tra đơn</li>
+          <li>🟡 <strong>Đang chuẩn bị:</strong> Xe đang được chuẩn bị</li>
+          <li>🟢 <strong>Sẵn sàng:</strong> Xe sẵn sàng giao/nhận</li>
+          <li>🔵 <strong>Đang giao:</strong> Xe đang trên đường</li>
+          <li>✅ <strong>Đã hoàn thành:</strong> Giao xe thành công</li>
+          <li>❌ <strong>Đã hủy:</strong> Đơn hàng bị hủy</li>
+        </ul>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h5>Liên hệ cửa hàng nếu cần</h5>
+        <p>Nhấp vào đơn hàng để xem:</p>
+        <ul>
+          <li>Thông tin chi tiết xe</li>
+          <li>Số điện thoại cửa hàng</li>
+          <li>Thời gian dự kiến giao xe</li>
+          <li>Địa chỉ giao xe</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SECTION 7: Payment Methods -->
+    <div class="guide-section">
+      <h2 class="section-title">7️⃣ Phương Thức Thanh Toán</h2>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <i class="bi bi-credit-card"></i>
+          <h6>Thẻ Tín Dụng</h6>
+          <p>Visa, Mastercard, American Express</p>
+        </div>
+        <div class="feature-card">
+          <i class="bi bi-wallet2"></i>
+          <h6>Ví Điện Tử</h6>
+          <p> ZaloPay </p>
+        </div>
+        <div class="feature-card">
+          <i class="bi bi-bank"></i>
+          <h6>Chuyển Khoản Ngân Hàng</h6>
+          <p>Giao dịch an toàn qua ACB, Vietcombank, v.v.</p>
+        </div>
+        <div class="feature-card">
+          <i class="bi bi-percent"></i>
+          <h6>Mã Khuyến Mãi</h6>
+          <p>Sử dụng mã giảm giá khi có</p>
+        </div>
+      </div>
+
+      <div class="step-card" style="margin-top: 30px;">
+        <h5>🔒 Bảo Mật Thanh Toán</h5>
+        <p>WedCar sử dụng công nghệ mã hóa SSL an toàn nhất để bảo vệ thông tin thanh toán của bạn. Bạn có thể yên tâm khi giao dịch với chúng tôi.</p>
+      </div>
+    </div>
+
+    <!-- SECTION 8: FAQ -->
+    <div class="guide-section">
+      <h2 class="section-title">❓ Câu Hỏi Thường Gặp (FAQ)</h2>
+
+      <div id="faqContainer">
+        <!-- FAQ items will be inserted here by JavaScript -->
+      </div>
+    </div>
+
+    <!-- SECTION 9: Technical Support -->
+    <div class="guide-section">
+      <h2 class="section-title">🆘 Hỗ Trợ Kỹ Thuật</h2>
+
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="step-card">
+            <h5>⚠️ Lỗi Phổ Biến và Cách Khắc Phục</h5>
+            <ul>
+              <li>
+                <strong>Không thể đăng nhập:</strong> 
+                <ul>
+                  <li>Kiểm tra email/số điện thoại có đúng không</li>
+                  <li>Kiểm tra chính tả mật khẩu (chữ hoa/thường)</li>
+                  <li>Chọn "Quên mật khẩu?" để đặt lại</li>
+                </ul>
+              </li>
+              <li>
+                <strong>Thanh toán không thành công:</strong> 
+                <ul>
+                  <li>Kiểm tra số dư tài khoản</li>
+                  <li>Thử phương thức thanh toán khác</li>
+                  <li>Liên hệ ngân hàng nếu bị chặn giao dịch</li>
+                </ul>
+              </li>
+              <li>
+                <strong>Không nhoonhận email xác nhận:</strong> 
+                <ul>
+                  <li>Kiểm tra thư mục Spam/Junk</li>
+                  <li>Yêu cầu gửi lại email xác nhận</li>
+                  <li>Liên hệ hỗ trợ khách hàng</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+          <div class="step-card">
+            <h5>🌐 Trình Duyệt và Thiết Bị Được Hỗ Trợ</h5>
+            <ul>
+              <li><strong>Trình duyệt:</strong> Chrome, Firefox, Safari, Edge (phiên bản mới nhất)</li>
+              <li><strong>Thiết bị:</strong> Máy tính, tablet, điện thoại di động</li>
+              <li><strong>Độ phân giải:</strong> Tối thiểu 360px chiều rộng (mobile)</li>
+              <li><strong>Kết nối:</strong> Cần kết nối Internet ổn định</li>
+            </ul>
+            <div class="tip-box">
+              <i class="bi bi-lightbulb"></i>
+              <strong>Mẹo:</strong> Xóa bộ nhớ cache trình duyệt nếu trang không tải đúng.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 10: Contact -->
+    <div class="guide-section">
+      <div class="contact-box">
+        <h4>📞 Cần Giúp Đỡ?</h4>
+        <p>Đội ngũ hỗ trợ khách hàng của chúng tôi luôn sẵn sàng giúp bạn!</p>
+        <a href="tel:0938119439"><i class="bi bi-telephone"></i> Gọi Ngay: 0938119439</a>
+        <a href="https://www.facebook.com/wedcar" target="_blank"><i class="bi bi-facebook"></i> Message Trên Facebook</a>
+      </div>
+    </div>
+
+  </div>
+
+  <%- include('footer') %>
+
+  <script>
+    // FAQ Data
+    const faqData = [
+      {
+        question: "Có phí ẩn nào không?",
+        answer: "Không có phí ẩn. Tất cả các phí sẽ được hiển thị rõ ràng trước khi bạn thanh toán, bao gồm phí giao xe, bảo hiểm, phí dịch vụ, v.v. Bạn sẽ thấy tổng giá hoàn chỉnh trước khi xác nhận tuần."
+      },
+      {
+        question: "Tôi có thể hủy đơn hàng không?",
+        answer: "Có, bạn có thể hủy đơn hàng trước khi cửa hàng xác nhận. Sau khi hủy, tiền sẽ được hoàn lại vào tài khoản của bạn trong vòng 3-5 ngày làm việc. Nếu xin hủy sau khi có xác nhận, có thể sẽ bị tính phí hủy."
+      },
+      {
+        question: "Nếu xe gặp sự cố thì sao?",
+        answer: "Nếu xe gặp sự cố sau khi bạn nhận, hãy liên hệ ngay cửa hàng. Chúng tôi sẽ giúp bạn đổi xe khác hoặc hoàn tiền. Tất cả xe đều được bảo hiểm đầy đủ."
+      },
+      {
+        question: "Có hỗ trợ tiếng Anh không?",
+        answer: "Hiện tại, WedCar chủ yếu hỗ trợ tiếng Việt. Tuy nhiên, bạn có thể liên hệ qua điện thoại hoặc email, và chúng tôi sẽ cố gắng hỗ trợ bằng tiếng Anh."
+      },
+      {
+        question: "Làm sao để nhập mã khuyến mãi?",
+        answer: "Khi bạn đang ở bước thanh toán, sẽ có một ô nhập 'Mã khuyến mãi' hoặc 'Mã giảm giá'. Nhập mã vào đó và nhấp 'Áp dụng'. Giá sẽ tự động giảm nếu mã hợp lệ."
+      },
+      {
+        question: "Có bảo hiểm cho xe không?",
+        answer: "Có. Tất cả xe trên WedCar đều được bảo hiểm. Khi đặt mua hoặc thuê, bảo hiểm sẽ được bao gồm trong giá hoặc tính riêng. Bạn sẽ thấy rõ ràng trong hóa đơn."
+      },
+      {
+        question: "Tôi có thể thêm người khác vào hợp đồng không?",
+        answer: "Nếu bạn muốn thêm người khác, hãy liên hệ trực tiếp cửa hàng. Họ sẽ cập nhật hợp đồng và yêu cầu CCCD/Hộ chiếu của người đó."
+      },
+      {
+        question: "Có yêu cầu tuổi tối thiểu để sử dụng dịch vụ không?",
+        answer: "Có, bạn cần tối thiểu 18 tuổi để đăng ký tài khoản. Để thuê/mua xe, tuổi tối thiểu có thể từ 18-21 tuổi tùy loại xe và chính sách cửa hàng."
+      }
+    ];
+
+    // Render FAQ
+    function renderFAQ() {
+      const container = document.getElementById('faqContainer');
+      faqData.forEach((item, index) => {
+        const faqHTML = `
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(${index})">
+              <span>${item.question}</span>
+              <i class="bi bi-chevron-down"></i>
+            </div>
+            <div class="faq-answer" id="faq-${index}">
+              <p>${item.answer}</p>
+            </div>
+          </div>
+        `;
+        container.innerHTML += faqHTML;
+      });
+    }
+
+    // Toggle FAQ
+    function toggleFAQ(index) {
+      const answer = document.getElementById(`faq-${index}`);
+      const question = answer.previousElementSibling;
+      
+      answer.classList.toggle('show');
+      question.classList.toggle('active');
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', renderFAQ);
+  </script>
+</body>
+</html>

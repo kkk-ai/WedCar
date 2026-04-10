@@ -1,5 +1,5 @@
 <%- include('../header') %>
-
+<%- include('../navbar') %>
 <style>
   .order-container {
     max-width: 1200px;
@@ -245,6 +245,15 @@
 
   .btn-zalopay-pay:hover { background: #0054cc; }
 
+  .btn-invoice {
+    background: #198754;
+    color: white;
+  }
+
+  .btn-invoice:hover {
+    background: #157347;
+  }
+
   .action-buttons {
     display: flex;
     gap: 10px;
@@ -299,6 +308,30 @@
     margin-bottom: 20px;
   }
 
+  .order-card-footer-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px 14px;
+    border-top: 1px solid #f1f1f1;
+  }
+
+  .btn-toggle-details {
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #333;
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .btn-toggle-details:hover {
+    background: #f8f9fa;
+  }
+
   @media (max-width: 768px) {
     .order-card-header {
       flex-direction: column;
@@ -327,13 +360,17 @@
     .btn-sm {
       width: 100%;
     }
+
+    .order-card-footer-actions {
+      flex-direction: column;
+    }
   }
 </style>
 
 <div class="order-container">
   <div class="order-header">
     <h1>🛒 Quản Lý Đơn Hàng</h1>
-    <% if (user) { %>
+    <% if (user && user.quyenHan === 'quanTri') { %>
       <a href="/api/donhang/them" class="btn-add">+ Tạo Đơn Hàng</a>
     <% } %>
   </div>
@@ -430,15 +467,34 @@
           </div>
 
           <div class="action-buttons">
-            <a href="/api/donhang/sua/<%= donHang._id %>" class="btn-sm btn-edit">✏️ Sửa</a>
-            <button class="btn-sm btn-delete" onclick="deleteOrder('<%= donHang._id %>')">🗑️ Xóa</button>            <% if (donHang.phuongThucThanhToan === 'ZaloPay' && donHang.trangThaiThanhToan !== 'DaThanhToan') { %>
-              <button class="btn-zalopay-pay" onclick="retryZaloPay('<%= donHang._id %>')">\ud83d\udc99 Thanh toán ZaloPay</button>
-            <% } %>          </div>
+            <% if (user && user.quyenHan === 'quanTri') { %>
+              <a href="/api/donhang/sua/<%= donHang._id %>" class="btn-sm btn-edit">✏️ Sửa</a>
+            <% } %>
+            <button class="btn-sm btn-delete" onclick="deleteOrder('<%= donHang._id %>')">🗑️ Xóa</button>
+            <% if (donHang.trangThai === 'HoanThanh') { %>
+              <a class="btn-sm btn-invoice" href="/api/donhang/<%= donHang._id %>/xuat-hoa-don">🧾 Xuất hóa đơn</a>
+            <% } %>
+            <% if (donHang.phuongThucThanhToan === 'ZaloPay' && donHang.trangThaiThanhToan !== 'DaThanhToan') { %>
+              <button class="btn-zalopay-pay" onclick="retryZaloPay('<%= donHang._id %>')">💙 Thanh toán ZaloPay</button>
+            <% } %>
+          </div>
         </div>
 
-        <div style="text-align: center; padding: 10px; cursor: pointer;" onclick="toggleDetails('<%= donHang._id %>')">
-          <span id="toggle-<%= donHang._id %>">👉 Chi Tiết</span>
+        <div class="order-card-footer-actions">
+          <button class="btn-toggle-details" type="button" onclick="toggleDetails('<%= donHang._id %>')">
+            <span id="toggle-<%= donHang._id %>">👉 Chi Tiết</span>
+          </button>
+          <% if (donHang.trangThai === 'HoanThanh') { %>
+            <a class="btn-zalopay-pay btn-invoice" href="/api/donhang/<%= donHang._id %>/xuat-hoa-don">🧾 Xuất hóa đơn</a>
+          <% } %>
+          <% if (donHang.trangThaiThanhToan !== 'DaThanhToan') { %>
+            <button class="btn-zalopay-pay" type="button" onclick="retryZaloPay('<%= donHang._id %>')">💳 Thanh toán ngay</button>
+          <% } %>
         </div>
+
+        
+        
+        
       </div>
     <% }); %>
   <% } else { %>
@@ -446,7 +502,7 @@
       <div class="empty-icon">🛍️</div>
       <h3>Chưa có đơn hàng nào</h3>
       <p>Hãy tạo đơn hàng đầu tiên của bạn</p>
-      <% if (user) { %>
+      <% if (user && user.quyenHan === 'quanTri') { %>
         <a href="/api/donhang/them" class="btn-add">+ Tạo Đơn Hàng</a>
       <% } %>
     </div>
@@ -510,7 +566,14 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ donHangId })
       });
-      const data = await res.json();
+      const raw = await res.text();
+      let data = {};
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch (parseError) {
+        data = { message: raw || 'Phan hoi khong hop le tu may chu' };
+      }
+
       if (res.ok && data.order_url) {
         window.location.href = data.order_url;
       } else {

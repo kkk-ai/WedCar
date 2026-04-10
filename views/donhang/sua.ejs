@@ -1,5 +1,5 @@
 <%- include('../header') %>
-
+<%- include('../navbar') %>
 <style>
   .order-form-container {
     max-width: 900px;
@@ -342,14 +342,23 @@
   </div>
 </div>
 
-const vehicleList = <%- JSON.stringify(donHang.danhSachXe.map(item => ({
-    xe: item.xe._id,
-    soLuong: item.soLuong,
-    giaTaiThoiDiemMua: item.giaTaiThoiDiemMua
-  }))) %>;
+<script id="vehicleListData" type="application/json"><%- JSON.stringify((donHang.danhSachXe || []).map(function (item) {
+  return {
+    xe: item && item.xe && item.xe._id ? item.xe._id : (item ? item.xe : null),
+    soLuong: item && item.soLuong ? item.soLuong : 1,
+    giaTaiThoiDiemMua: item && item.giaTaiThoiDiemMua ? item.giaTaiThoiDiemMua : 0
+  };
+})) %></script>
 
 <script>
-  
+  const vehicleListDataElement = document.getElementById('vehicleListData');
+  let vehicleList = [];
+
+  try {
+    vehicleList = vehicleListDataElement ? JSON.parse(vehicleListDataElement.textContent) : [];
+  } catch (error) {
+    vehicleList = [];
+  }
 
   document.getElementById('orderForm').addEventListener('submit', async (e) => {
     e.preventDefault();

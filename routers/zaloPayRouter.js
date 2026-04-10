@@ -5,6 +5,7 @@ const CryptoJS = require('crypto-js');
 const moment = require('moment');
 const qs = require('qs');
 const DonHang = require('../models/DonHang');
+const { requireLogin } = require('../middlewares/auth');
 
 // ZaloPay Sandbox config
 const config = {
@@ -22,9 +23,9 @@ const config = {
 // Tạo đơn thanh toán ZaloPay cho đơn hàng đã có trong DB
 // Body: { donHangId }
 // ----------------------------------------------------------------
-router.post('/payment', async (req, res) => {
+router.post('/payment', requireLogin, async (req, res) => {
   try {
-    const { donHangId } = req.body;
+    const { donHangId, soTienThanhToan } = req.body;
     if (!donHangId) {
       return res.status(400).json({ message: 'Thiếu donHangId' });
     }
@@ -32,6 +33,20 @@ router.post('/payment', async (req, res) => {
     const donHang = await DonHang.findById(donHangId).populate('nguoiDung');
     if (!donHang) {
       return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
+    }
+
+    const sessionUser = req.session?.user;
+    const userId = sessionUser?._id || sessionUser?.id;
+    const isAdmin = sessionUser?.quyenHan === 'quanTri';
+    const isOwner = String(donHang.nguoiDung?._id || donHang.nguoiDung) === String(userId);
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ message: 'Bạn không có quyền thanh toán đơn hàng này' });
+    }
+
+    // Sử dụng soTienThanhToan nếu được gửi, nếu không dùng tongTien từ donHang
+    const amount = Number(soTienThanhToan || donHang.tongTien || 0);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return res.status(400).json({ message: 'Số tiền đơn hàng không hợp lệ để thanh toán ZaloPay' });
     }
 
     const transID = Math.floor(Math.random() * 1000000);
@@ -48,7 +63,7 @@ router.post('/payment', async (req, res) => {
       app_time: Date.now(),
       item: JSON.stringify([]),
       embed_data: JSON.stringify(embed_data),
-      amount: donHang.tongTien,
+      amount,
       callback_url: config.callback_url,
       description: `WedCar - Thanh toan don hang #${donHangId}`,
       bank_code: '',

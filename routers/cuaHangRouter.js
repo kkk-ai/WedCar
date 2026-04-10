@@ -2,6 +2,60 @@ const express = require('express');
 const router = express.Router();
 const CuaHang = require('../models/CuaHang');
 
+function parseGioMoCua(rawValue) {
+  if (rawValue === undefined || rawValue === null || rawValue === '') {
+    return { value: undefined };
+  }
+
+  if (typeof rawValue === 'string') {
+    const value = rawValue.trim();
+    const timeMatch = value.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+
+    if (timeMatch) {
+      const hours = Number(timeMatch[1]);
+      const minutes = Number(timeMatch[2]);
+      const date = new Date();
+      date.setHours(hours, minutes, 0, 0);
+      return { value: date };
+    }
+
+    const parsedDate = new Date(value);
+    if (!Number.isNaN(parsedDate.getTime())) {
+      return { value: parsedDate };
+    }
+
+    return {
+      error: 'Giờ mở cửa không hợp lệ. Vui lòng dùng định dạng HH:mm (ví dụ: 08:00).'
+    };
+  }
+
+  const parsedDate = new Date(rawValue);
+  if (!Number.isNaN(parsedDate.getTime())) {
+    return { value: parsedDate };
+  }
+
+  return {
+    error: 'Giờ mở cửa không hợp lệ. Vui lòng dùng định dạng HH:mm (ví dụ: 08:00).'
+  };
+}
+
+function parseCoordinate(rawValue, min, max, fieldName) {
+  if (rawValue === undefined || rawValue === null || rawValue === '') {
+    return { value: undefined };
+  }
+
+  const numericValue = Number(rawValue);
+  if (Number.isNaN(numericValue)) {
+    return { error: `${fieldName} phải là số hợp lệ.` };
+  }
+
+  if (numericValue < min || numericValue > max) {
+    return { error: `${fieldName} phải nằm trong khoảng từ ${min} đến ${max}.` };
+  }
+
+  return { value: numericValue };
+}
+
 // Trang danh sách cửa hàng
 router.get('/', async (req, res) => {
   try {
@@ -68,12 +122,29 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Email đã được sử dụng' });
     }
 
+    const parsedGioMoCua = parseGioMoCua(req.body.gioMoCua);
+    if (parsedGioMoCua.error) {
+      return res.status(400).json({ message: parsedGioMoCua.error });
+    }
+
+    const parsedLatitude = parseCoordinate(req.body.latitude, -90, 90, 'Vĩ độ');
+    if (parsedLatitude.error) {
+      return res.status(400).json({ message: parsedLatitude.error });
+    }
+
+    const parsedLongitude = parseCoordinate(req.body.longitude, -180, 180, 'Kinh độ');
+    if (parsedLongitude.error) {
+      return res.status(400).json({ message: parsedLongitude.error });
+    }
+
     const cuaHang = new CuaHang({
       tenCuaHang: req.body.tenCuaHang.trim(),
       diaChi: req.body.diaChi?.trim(),
       soDienThoai: req.body.soDienThoai?.trim(),
       email: req.body.email.toLowerCase(),
-      gioMoCua: req.body.gioMoCua || new Date()
+      gioMoCua: parsedGioMoCua.value || new Date(),
+      latitude: parsedLatitude.value,
+      longitude: parsedLongitude.value
     });
 
     const newCuaHang = await cuaHang.save();
@@ -107,7 +178,32 @@ router.put('/:id', async (req, res) => {
       cuaHang.email = req.body.email.toLowerCase();
     }
 
-    cuaHang.gioMoCua = req.body.gioMoCua || cuaHang.gioMoCua;
+    const parsedGioMoCua = parseGioMoCua(req.body.gioMoCua);
+    if (parsedGioMoCua.error) {
+      return res.status(400).json({ message: parsedGioMoCua.error });
+    }
+
+    const parsedLatitude = parseCoordinate(req.body.latitude, -90, 90, 'Vĩ độ');
+    if (parsedLatitude.error) {
+      return res.status(400).json({ message: parsedLatitude.error });
+    }
+
+    const parsedLongitude = parseCoordinate(req.body.longitude, -180, 180, 'Kinh độ');
+    if (parsedLongitude.error) {
+      return res.status(400).json({ message: parsedLongitude.error });
+    }
+
+    if (parsedGioMoCua.value !== undefined) {
+      cuaHang.gioMoCua = parsedGioMoCua.value;
+    }
+
+    if (parsedLatitude.value !== undefined) {
+      cuaHang.latitude = parsedLatitude.value;
+    }
+
+    if (parsedLongitude.value !== undefined) {
+      cuaHang.longitude = parsedLongitude.value;
+    }
 
     const updatedCuaHang = await cuaHang.save();
     res.json({

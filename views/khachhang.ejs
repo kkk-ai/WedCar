@@ -1,90 +1,603 @@
 <%- include('header') %>
+<style>
+  :root {
+    --primary: #FFC107;
+    --primary-dark: #FFB800;
+    --secondary: #1a1a1a;
+    --light: #f8f9fa;
+    --border: #e0e0e0;
+  }
+
+  body {
+    background: linear-gradient(135deg, #f5f5f5 0%, #efefef 100%);
+  }
+
+  .page-header {
+    background: linear-gradient(135deg, var(--secondary) 0%, #2a2a2a 100%);
+    color: #fff;
+    padding: 30px 0;
+    margin-bottom: 30px;
+  }
+
+  .page-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .page-header p {
+    margin: 8px 0 0;
+    color: rgba(255,255,255,0.8);
+    font-size: 14px;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 20px;
+  }
+
+  .user-card {
+    background: linear-gradient(135deg, var(--secondary) 0%, #2a2a2a 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .user-card .card-body {
+    padding: 0;
+  }
+
+  .user-card h5 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--primary);
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .user-info-item {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .user-info-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .user-info strong {
+    color: var(--primary);
+  }
+
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .nav-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: white;
+    color: #333;
+    text-decoration: none;
+    border-radius: 8px;
+    border-left: 3px solid transparent;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .nav-menu a:hover,
+  .nav-menu a.active {
+    background: var(--primary);
+    color: #000;
+    border-left-color: #2a2a2a;
+    transform: translateX(5px);
+  }
+
+  .main-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  .content-header {
+    background: linear-gradient(135deg, var(--secondary) 0%, #2a2a2a 100%);
+    color: #fff;
+    padding: 20px;
+    border-bottom: 3px solid var(--primary);
+  }
+
+  .content-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .content-body {
+    padding: 30px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #000;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(255,193,7,0.2);
+    transition: all 0.3s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(255,193,7,0.3);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.7);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .stat-value {
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--primary);
+  }
+
+  .car-card {
+    background: #f8f9fa;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .car-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .car-image {
+    width: 200px;
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #e0e0e0;
+  }
+
+  .car-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .car-info h5 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-bottom: 8px;
+  }
+
+  .car-specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+    font-size: 13px;
+  }
+
+  .spec-item strong {
+    color: var(--primary);
+  }
+
+  .price-section {
+    background: linear-gradient(135deg, var(--secondary) 0%, #2a2a2a 100%);
+    color: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .price-item {
+    text-align: center;
+  }
+
+  .price-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 6px;
+  }
+
+  .price-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .form-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .form-section h5 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary);
+  }
+
+  .form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--secondary);
+    margin-bottom: 6px;
+  }
+
+  .form-control,
+  .form-select {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255,193,7,0.1);
+    outline: none;
+  }
+
+  .form-check-label {
+    font-size: 13px;
+    color: #333;
+    margin-left: 6px;
+  }
+
+  .btn-checkout {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #000;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255,193,7,0.2);
+  }
+
+  .btn-checkout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255,193,7,0.3);
+  }
+
+  .guidelines {
+    background: linear-gradient(135deg, rgba(255,193,7,0.1) 0%, rgba(255,193,7,0.05) 100%);
+    border-left: 4px solid var(--primary);
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 20px;
+  }
+
+  .guidelines h5 {
+    color: var(--secondary);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .guidelines ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .guidelines li {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 960px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .car-row {
+      grid-template-columns: 1fr;
+    }
+
+    .car-image {
+      width: 100%;
+      height: 200px;
+    }
+
+    .price-section {
+      grid-template-columns: 1fr;
+    }
+
+    .nav-menu {
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .nav-menu a {
+      flex: 1;
+      min-width: 150px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .page-header h1 {
+      font-size: 22px;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .content-body {
+      padding: 15px;
+    }
+
+    .car-specs {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
 <body>
   <%- include('navbar') %>
 
-  <div class="container mt-4 mb-5">
+  <div class="page-header">
+    <div class="container">
+      <h1>🏠 Bảng Điều Khiển Khách Hàng</h1>
+      <p>Quản lý thông tin cá nhân, đơn hàng và lịch hẹn của bạn</p>
+    </div>
+  </div>
+
+  <div class="container mb-5">
     <div class="row">
-      <div class="col-lg-3">
-        <div class="card mb-3">
+      <div class="col-lg-3 sidebar">
+        <!-- User Card -->
+        <div class="user-card">
           <div class="card-body">
-            <h5 class="card-title">Xin chào, <%= user?.hoTen || 'Khách hàng' %></h5>
-            <p class="card-text"><strong>Email:</strong> <%= user?.email || '-' %></p>
-            <p class="card-text"><strong>Điện thoại:</strong> <%= user?.soDienThoai || '-' %></p>
-            <p class="card-text"><strong>Quyền:</strong> <%= user?.quyenHan === 'quanTri' ? 'Quản trị' : 'Khách hàng' %></p>
+            <h5>👤 <%= user?.hoTen || 'Khách hàng' %></h5>
+            <div class="user-info">
+              <div class="user-info-item">
+                <strong>Email:</strong>
+                <span><%= user?.email || 'N/A' %></span>
+              </div>
+              <div class="user-info-item">
+                <strong>SĐT:</strong>
+                <span><%= user?.soDienThoai || 'N/A' %></span>
+              </div>
+              <div class="user-info-item">
+                <strong>Quyền:</strong>
+                <span><%= user?.quyenHan === 'quanTri' ? '⚙️ Quản trị' : '👥 Khách hàng' %></span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="list-group">
-          <a href="/khachhang" class="list-group-item list-group-item-action active">Tổng quan</a>
-          <a href="/api/lichhen" class="list-group-item list-group-item-action">Lịch hẹn của tôi</a>
-          <a href="/api/donhang" class="list-group-item list-group-item-action">Đơn hàng của tôi</a>
-          <a href="/taikhoan/hoso" class="list-group-item list-group-item-action">Hồ sơ cá nhân</a>
-          <a href="/auth/dang-xuat" class="list-group-item list-group-item-action">Đăng xuất</a>
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+          <a href="/khachhang" class="active">📊 Tổng quan</a>
+          <a href="/api/lichhen">📅 Lịch hẹn</a>
+          <a href="/api/donhang">🧾 Đơn hàng</a>
+          <a href="/api/nguoidung">👤 Cập nhật thông tin</a>
+          <a href="javascript:void(0);" onclick="dangXuat()">🚪 Đăng xuất</a>
         </div>
       </div>
 
       <div class="col-lg-9">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="card-title">Bảng điều khiển khách hàng</h3>
-            <p class="text-muted">Xem thông tin nhanh về hoạt động, đơn hàng và lịch hẹn.</p>
+        <div class="main-content">
+          <div class="content-header">
+            <h3>Tổng quan hoạt động</h3>
+          </div>
 
-            <div class="row g-3">
-              <div class="col-md-4">
-                <div class="card bg-light h-100">
-                  <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Tổng đơn hàng</h6>
-                    <h4 id="customerOrders" class="card-title">--</h4>
-                  </div>
-                </div>
+          <div class="content-body">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">Tổng đơn hàng</div>
+                <div class="stat-value" id="customerOrders">--</div>
               </div>
-              <div class="col-md-4">
-                <div class="card bg-light h-100">
-                  <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Lịch hẹn chờ</h6>
-                    <h4 id="pendingAppointments" class="card-title">--</h4>
-                  </div>
-                </div>
+              <div class="stat-card">
+                <div class="stat-label">Lịch hẹn chờ</div>
+                <div class="stat-value" id="pendingAppointments">--</div>
               </div>
-              <div class="col-md-4">
-                <div class="card bg-light h-100">
-                  <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Xe yêu thích</h6>
-                    <h4 id="favoriteCars" class="card-title">0</h4>
-                  </div>
-                </div>
-              </div>
-            </div>
+       </div>
 
-            <div class="mt-4">
-              <h5>Thông tin mua xe</h5>
-              <% if (selectedCar) { %>
-                <div class="card mb-3 border-success">
-                  <div class="row g-0">
-                    <div class="col-md-4">
-                      <img src="<%= selectedCar.hinhAnh?.[0] || '/images/no-car.jpg' %>" class="img-fluid rounded-start" alt="<%= selectedCar.tenXe %>">
+            <!-- Car Purchase Section -->
+            <h3 class="section-title">🛍️ Thông tin mua xe</h3>
+            <% if (selectedCar) { %>
+              <% 
+                const rawSelectedImage = selectedCar.hinhAnh && selectedCar.hinhAnh[0] ? selectedCar.hinhAnh[0] : '';
+                const selectedImageSrc = rawSelectedImage
+                  ? (/(^https?:\/\/|^\/)/i.test(rawSelectedImage)
+                    ? rawSelectedImage
+                    : '/images/' + rawSelectedImage.replace(/^\/+/, ''))
+                  : '/images/no-car.jpg';
+              %>
+              <div class="car-card">
+                <div style="padding: 20px;">
+                  <div class="car-row">
+                    <div class="car-image">
+                      <img src="<%= selectedImageSrc %>" alt="<%= selectedCar.tenXe %>" onerror="this.src='/images/no-car.jpg'">
                     </div>
-                    <div class="col-md-8">
-                      <div class="card-body">
-                        <h5 class="card-title"><%= selectedCar.tenXe %> (<%= selectedCar.hangXe %>)</h5>
-                        <p class="card-text"><strong>Giá:</strong> <%= new Intl.NumberFormat('vi-VN').format(selectedCar.giaBan) %> đ</p>
-                        <p class="card-text"><strong>Nhien liệu:</strong> <%= selectedCar.nhienLieu || '-' %></p>
-                        <p class="card-text"><strong>Hộp số:</strong> <%= selectedCar.hopSo || '-' %></p>
-                        <button id="payNowBtn" type="button" class="btn btn-primary">Thanh toán</button>
+                    <div class="car-info">
+                      <h5><%= selectedCar.tenXe %> <span style="color: #999; font-size: 14px;">(<%= selectedCar.hangXe %>)</span></h5>
+                      
+                      <div class="car-specs">
+                        <div><strong>Loại:</strong> <%= selectedCar.loaiXe || '-' %></div>
+                        <div><strong>Năm:</strong> <%= selectedCar.namSanXuat || '-' %></div>
+                        <div><strong>Nhiên liệu:</strong> <%= selectedCar.nhienLieu || '-' %></div>
+                        <div><strong>Hộp số:</strong> <%= selectedCar.hopSo || '-' %></div>
+                        <div><strong>Màu sắc:</strong> <%= selectedCar.mauSac || '-' %></div>
+                        <div><strong>Tồn kho:</strong> <%= selectedCar.soLuongTon || '0' %></div>
                       </div>
+
+                      <div class="price-section">
+                        <div class="price-item">
+                          <div class="price-label">Giá gốc</div>
+                          <div class="price-value"><%= new Intl.NumberFormat('vi-VN').format(selectedCar.giaBan) %> đ</div>
+                        </div>
+                        <div class="price-item">
+                          <div class="price-label">VAT (10%)</div>
+                          <div class="price-value"><%= new Intl.NumberFormat('vi-VN').format(Math.round((selectedCar.giaBan || 0) * 0.1)) %> đ</div>
+                        </div>
+                        <div class="price-item">
+                          <div class="price-label">Tổng cộng</div>
+                          <div class="price-value"><%= new Intl.NumberFormat('vi-VN').format((selectedCar.giaBan || 0) + Math.round((selectedCar.giaBan || 0) * 0.1)) %> đ</div>
+                        </div>
+                        
+                      </div>
+                      <div class="price-item" style="background: rgba(4, 3, 1, 0.888); border-radius: 8px; padding: 12px; border: 2px solid var(--primary);">
+                          <div class="price-label" style="font-weight: 700; color: var(--primary);">💰 Chỉ cần thanh toán với tiền cọc 30% tổng giá bán</div>
+                          <div class="price-value" style="font-size: 22px; color: var(--primary);"><%= new Intl.NumberFormat('vi-VN').format(((selectedCar.giaBan || 0) + Math.round((selectedCar.giaBan || 0) * 0.1)) * 0.3) %> đ</div>
+                        </div>
+                      <button id="showCheckoutInfoBtn" type="button" class="btn-checkout">Điền thông tin nhận xe</button>
                     </div>
                   </div>
                 </div>
-              <% } else { %>
-                <p class="text-muted">Chưa chọn xe để mua. Trở về trang chủ để chọn xe.</p>
-              <% } %>
+              </div>
 
-              <h5>Hướng dẫn:</h5>
-              <ul>
-                <li>Vào mục "Lịch hẹn của tôi" để điều chỉnh trạng thái hoặc hủy đặt hẹn.</li>
-                <li>Vào mục "Đơn hàng của tôi" để xem chi tiết đơn, trạng thái thanh toán.</li>
-                <li>Vào "Hồ sơ cá nhân" để cập nhật thông tin.</li>
-              </ul>
+              <!-- Checkout Info Card -->
+              <div id="checkoutInfoCard" class="form-section" style="display: none;">
+                <h5>📋 Thông tin khách hàng</h5>
+                
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+                  <div>
+                    <label for="khHoTen" class="form-label">Họ và tên</label>
+                    <input id="khHoTen" type="text" class="form-control" value="<%= user?.hoTen || '' %>" required>
+                  </div>
+                  <div>
+                    <label for="khSoDienThoai" class="form-label">Số điện thoại</label>
+                    <input id="khSoDienThoai" type="text" class="form-control" value="<%= user?.soDienThoai || '' %>" required>
+                  </div>
+                  <div>
+                    <label for="khCanCuoc" class="form-label">Số căn cước</label>
+                    <input id="khCanCuoc" type="text" class="form-control" placeholder="Nhập số căn cước công dân" required>
+                  </div>
+                  <div>
+                    <label for="khMaSoThue" class="form-label">Mã số thuế</label>
+                    <input id="khMaSoThue" type="text" class="form-control" placeholder="Nhập mã số thuế" required>
+                  </div>
+                </div>
+
+                <hr style="border-color: var(--border); margin: 20px 0;">
+
+                <h5 style="border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 15px;">🚗 Hình thức nhận xe</h5>
+
+                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                  <div style="flex: 1;">
+                    <input class="form-check-input" type="radio" name="nhanXeMode" id="nhanXeCuaHang" value="taiCuaHang" checked style="width: 18px; height: 18px; cursor: pointer;">
+                    <label class="form-check-label" for="nhanXeCuaHang" style="cursor: pointer; margin-left: 8px; font-weight: 500;">Nhận tại cửa hàng</label>
+                  </div>
+                  <div style="flex: 1;">
+                    <input class="form-check-input" type="radio" name="nhanXeMode" id="nhanXeTaiNha" value="taiNha" style="width: 18px; height: 18px; cursor: pointer;">
+                    <label class="form-check-label" for="nhanXeTaiNha" style="cursor: pointer; margin-left: 8px; font-weight: 500;">Nhận tại nhà</label>
+                  </div>
+                </div>
+
+                <!-- Store Pickup Section -->
+                <div id="pickupAtStoreSection" style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                  <label for="pickupStoreId" class="form-label">Chọn cửa hàng nhận xe</label>
+                  <select id="pickupStoreId" class="form-select">
+                    <option value="">Đang tải danh sách cửa hàng...</option>
+                  </select>
+                  <small style="color: #666; margin-top: 6px; display: block;">Danh sách cửa hàng từ hệ thống</small>
+                </div>
+
+                <!-- Home Delivery Section -->
+                <div id="pickupAtHomeSection" style="background: rgba(255,193,7,0.05); padding: 15px; border-left: 3px solid var(--primary); border-radius: 6px; display: none;">
+                  <h6 style="color: var(--secondary); margin-bottom: 15px; font-weight: 600;">📍 Thông tin giao xe tại nhà</h6>
+                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px;">
+                    <div>
+                      <label for="homeReceiverName" class="form-label">Người nhận xe</label>
+                      <input id="homeReceiverName" type="text" class="form-control" placeholder="Tên người nhận">
+                    </div>
+                    <div>
+                      <label for="homeReceiverPhone" class="form-label">Số điện thoại</label>
+                      <input id="homeReceiverPhone" type="text" class="form-control" placeholder="SĐT người nhận">
+                    </div>
+                  </div>
+                  <div style="margin-bottom: 15px;">
+                    <label for="homeReceiverAddress" class="form-label">Địa chỉ giao xe</label>
+                    <textarea id="homeReceiverAddress" class="form-control" rows="2" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"></textarea>
+                  </div>
+                  <div>
+                    <label for="homeReceiverNote" class="form-label">Ghi chú giao xe</label>
+                    <textarea id="homeReceiverNote" class="form-control" rows="2" placeholder="VD: Giao giờ hành chính, lưu ý khác..."></textarea>
+                  </div>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                  <button id="payNowBtn" type="button" class="btn-checkout">💳 Thanh toán tiền đặt cọc với ZaloPay</button>
+                </div>
+              </div>
+            <% } else { %>
+              <div style="background: rgba(255,193,7,0.1); border-left: 4px solid var(--primary); padding: 20px; border-radius: 8px; text-align: center;">
+                <h5 style="color: var(--secondary); margin-bottom: 10px;">⚠️ Chưa chọn xe</h5>
+                <p style="color: #666; margin-bottom: 0;">Trở về <a href="/" style="color: var(--primary); text-decoration: none; font-weight: 600;">trang chủ</a> để chọn xe muốn mua</p>
+              </div>
+            <% } %>
+
+              <div class="guidelines">
+                <h5>📚 Hướng dẫn sử dụng</h5>
+                <ul>
+                  <li><strong>Lịch hẹn của tôi:</strong> Xem và quản lý các lịch hẹn xem xe của bạn</li>
+                  <li><strong>Đơn hàng của tôi:</strong> Theo dõi chi tiết đơn hàng và trạng thái thanh toán</li>
+                  <li><strong>Thông tin cá nhân:</strong> Cập nhật tài khoản và thông tin liên hệ</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -94,6 +607,7 @@
 
   <%- include('footer') %>
   <%- include('javascript') %>
+  <script id="selectedCarData" type="application/json"><%- JSON.stringify(selectedCar || null) %></script>
 
   <script>
     async function fetchData() {
@@ -106,9 +620,9 @@
         const orders = await orderRes.json();
         const appointments = await aptRes.json();
 
-        const userId = '<%= user?.id %>';
-        const myOrders = orders.filter(o => o.nguoiDung && o.nguoiDung._id === userId);
-        const myAppointments = appointments.filter(a => a.nguoiDung && a.nguoiDung._id === userId);
+        const userId = '<%= user?._id || user?.id || "" %>';
+        const myOrders = orders.filter(o => o.nguoiDung && String(o.nguoiDung._id) === String(userId));
+        const myAppointments = appointments.filter(a => a.nguoiDung && String(a.nguoiDung._id) === String(userId));
 
         document.getElementById('customerOrders').innerText = myOrders.length;
         document.getElementById('pendingAppointments').innerText = myAppointments.filter(a => a.trangThai === 'ChoXacNhan').length;
@@ -117,12 +631,137 @@
       }
     }
 
+    function getSelectedCar() {
+      const selectedCarDataElement = document.getElementById('selectedCarData');
+      const selectedCarText = selectedCarDataElement ? selectedCarDataElement.textContent : 'null';
+
+      try {
+        return JSON.parse(selectedCarText);
+      } catch (parseError) {
+        return null;
+      }
+    }
+
+    function toggleDeliverySections() {
+      const modeElement = document.querySelector('input[name="nhanXeMode"]:checked');
+      const mode = modeElement ? modeElement.value : 'taiCuaHang';
+
+      const storeSection = document.getElementById('pickupAtStoreSection');
+      const homeSection = document.getElementById('pickupAtHomeSection');
+
+      if (!storeSection || !homeSection) {
+        return;
+      }
+
+      if (mode === 'taiNha') {
+        storeSection.style.display = 'none';
+        homeSection.style.display = 'block';
+      } else {
+        storeSection.style.display = 'block';
+        homeSection.style.display = 'none';
+      }
+    }
+
+    async function loadStoresForPickup() {
+      const select = document.getElementById('pickupStoreId');
+      if (!select) {
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/cuahang/api/list');
+        const stores = await response.json();
+
+        if (!response.ok || !Array.isArray(stores)) {
+          throw new Error('Không tải được danh sách cửa hàng');
+        }
+
+        const sortedStores = stores.slice().sort((a, b) => {
+          return String(a.tenCuaHang || '').localeCompare(String(b.tenCuaHang || ''), 'vi');
+        });
+
+        select.innerHTML = ['<option value="">-- Chọn cửa hàng nhận xe --</option>']
+          .concat(sortedStores.map(store => {
+            const storeName = String(store.tenCuaHang || 'Cửa hàng WedCar');
+            const address = String(store.diaChi || 'Chưa có địa chỉ');
+            return '<option value="' + store._id + '">' + storeName + ' - ' + address + '</option>';
+          }))
+          .join('');
+      } catch (error) {
+        select.innerHTML = '<option value="">Không thể tải danh sách cửa hàng</option>';
+      }
+    }
+
+    function buildCheckoutPayload() {
+      const hoTen = String(document.getElementById('khHoTen')?.value || '').trim();
+      const soDienThoai = String(document.getElementById('khSoDienThoai')?.value || '').trim();
+      const soCanCuoc = String(document.getElementById('khCanCuoc')?.value || '').trim();
+      const maSoThue = String(document.getElementById('khMaSoThue')?.value || '').trim();
+
+      if (!hoTen || !soDienThoai || !soCanCuoc || !maSoThue) {
+        throw new Error('Vui lòng điền đầy đủ họ tên, số điện thoại, số căn cước và mã số thuế.');
+      }
+
+      const modeElement = document.querySelector('input[name="nhanXeMode"]:checked');
+      const hinhThucNhanXe = modeElement ? modeElement.value : 'taiCuaHang';
+
+      const payload = {
+        thongTinKhachHang: {
+          hoTen,
+          soDienThoai,
+          soCanCuoc,
+          maSoThue
+        },
+        hinhThucNhanXe
+      };
+
+      if (hinhThucNhanXe === 'taiCuaHang') {
+        const pickupStoreId = String(document.getElementById('pickupStoreId')?.value || '').trim();
+        if (!pickupStoreId) {
+          throw new Error('Vui lòng chọn cửa hàng nhận xe.');
+        }
+        payload.cuaHangNhanXe = pickupStoreId;
+      } else {
+        const nguoiNhan = String(document.getElementById('homeReceiverName')?.value || '').trim();
+        const soDienThoaiNhan = String(document.getElementById('homeReceiverPhone')?.value || '').trim();
+        const diaChi = String(document.getElementById('homeReceiverAddress')?.value || '').trim();
+        const ghiChu = String(document.getElementById('homeReceiverNote')?.value || '').trim();
+
+        if (!nguoiNhan || !soDienThoaiNhan || !diaChi) {
+          throw new Error('Vui lòng điền đủ thông tin nhận xe tại nhà.');
+        }
+
+        payload.thongTinNhanXeTaiNha = {
+          nguoiNhan,
+          soDienThoaiNhan,
+          diaChi,
+          ghiChu
+        };
+      }
+
+      return payload;
+    }
+
     async function payNow() {
-      const selectedCar = <%- JSON.stringify(selectedCar || null) %>;
+      const selectedCar = getSelectedCar();
+
       if (!selectedCar) {
         alert('Không có xe để thanh toán.');
         return;
       }
+
+      let checkoutPayload;
+      try {
+        checkoutPayload = buildCheckoutPayload();
+      } catch (validationError) {
+        alert(validationError.message);
+        return;
+      }
+
+      const carPrice = Number(selectedCar.giaBan || 0);
+      const vatAmount = Math.round(carPrice * 0.1);
+      const finalTotal = carPrice + vatAmount;
+      const depositAmount = Math.round(finalTotal * 0.3); // 30% deposit
 
       try {
         // 1. Tạo đơn hàng nội bộ
@@ -132,7 +771,12 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             danhSachXe: [{ xe: selectedCar._id, soLuong: 1, giaTaiThoiDiemMua: selectedCar.giaBan }],
-            tongTien: selectedCar.giaBan
+            tongTien: depositAmount,
+            phuongThucThanhToan: 'ZaloPay',
+            thongTinKhachHang: checkoutPayload.thongTinKhachHang,
+            hinhThucNhanXe: checkoutPayload.hinhThucNhanXe,
+            cuaHangNhanXe: checkoutPayload.cuaHangNhanXe,
+            thongTinNhanXeTaiNha: checkoutPayload.thongTinNhanXeTaiNha
           })
         });
 
@@ -141,7 +785,13 @@
           return;
         }
 
-        const orderData = await orderRes.json();
+        const orderRaw = await orderRes.text();
+        let orderData = {};
+        try {
+          orderData = orderRaw ? JSON.parse(orderRaw) : {};
+        } catch (parseError) {
+          orderData = { message: orderRaw || 'Phan hoi tao don hang khong hop le' };
+        }
         console.log('[payNow] orderData', orderData);
 
         if (!orderRes.ok) {
@@ -149,7 +799,37 @@
           return;
         }
 
-        alert('Thanh toán thành công, đơn hàng đã được ghi nhận.');
+        if (!orderData.donHang || !orderData.donHang._id) {
+          alert('Đơn hàng đã tạo nhưng thiếu mã đơn để kết nối ZaloPay.');
+          window.location.href = '/api/donhang';
+          return;
+        }
+
+        // 2. Tạo giao dịch ZaloPay và chuyển hướng sang cổng thanh toán
+        const zaloRes = await fetch('/zalopay/payment', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            donHangId: orderData.donHang._id,
+            soTienThanhToan: depositAmount
+          })
+        });
+
+        const zaloRaw = await zaloRes.text();
+        let zaloData = {};
+        try {
+          zaloData = zaloRaw ? JSON.parse(zaloRaw) : {};
+        } catch (parseError) {
+          zaloData = { message: zaloRaw || 'Phan hoi ZaloPay khong hop le' };
+        }
+
+        if (zaloRes.ok && zaloData.order_url) {
+          window.location.href = zaloData.order_url;
+          return;
+        }
+
+        alert('Đơn hàng đã tạo, nhưng không thể kết nối ZaloPay: ' + (zaloData.message || 'Không xác định'));
         window.location.href = '/api/donhang';
       } catch (err) {
         alert('Lỗi mạng: ' + err.message);
@@ -158,11 +838,31 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       fetchData();
+
+      const showInfoBtn = document.getElementById('showCheckoutInfoBtn');
+      const checkoutInfoCard = document.getElementById('checkoutInfoCard');
+      const deliveryModeRadios = document.querySelectorAll('input[name="nhanXeMode"]');
+
+      if (showInfoBtn && checkoutInfoCard) {
+        showInfoBtn.addEventListener('click', async () => {
+          checkoutInfoCard.style.display = 'block';
+          showInfoBtn.style.display = 'none';
+          await loadStoresForPickup();
+          toggleDeliverySections();
+        });
+      }
+
+      deliveryModeRadios.forEach(radio => {
+        radio.addEventListener('change', toggleDeliverySections);
+      });
+
       const btn = document.getElementById('payNowBtn');
       if (btn) {
         btn.addEventListener('click', payNow);
       }
     });
   </script>
+
+  
 </body>
 </html>
