@@ -22,6 +22,17 @@ const donHangSchema = new mongoose.Schema({
         enum: ['ChoXacNhan', 'DangXuLy', 'HoanThanh', 'DaHuy'],
         default: 'ChoXacNhan'
     },
+    phuongThucThanhToan: {
+        type: String,
+        enum: ['COD', 'ZaloPay'],
+        default: 'COD'
+    },
+    trangThaiThanhToan: {
+        type: String,
+        enum: ['ChuaThanhToan', 'DangXuLy', 'DaThanhToan', 'ThatBai'],
+        default: 'ChuaThanhToan'
+    },
+    zaloPayTransId: { type: String },
     ngayDat: { type: Date, default: Date.now }
 });
 

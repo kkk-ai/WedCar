@@ -89,7 +89,7 @@ router.post('/', requireLogin, async (req, res) => {
       return res.status(401).json({ message: 'Yêu cầu đăng nhập' });
     }
 
-    const { danhSachXe, tongTien } = req.body;
+    const { danhSachXe, tongTien, phuongThucThanhToan } = req.body;
 
     // Validation
     if (!danhSachXe || !Array.isArray(danhSachXe) || danhSachXe.length === 0) {
@@ -100,7 +100,8 @@ router.post('/', requireLogin, async (req, res) => {
       nguoiDung: userId,
       danhSachXe,
       tongTien: tongTien || 0,
-      trangThai: 'ChoXacNhan'
+      trangThai: 'ChoXacNhan',
+      phuongThucThanhToan: phuongThucThanhToan || 'COD',
     });
 
     const newDonHang = await donHang.save();

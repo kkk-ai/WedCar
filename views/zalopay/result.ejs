@@ -1,0 +1,71 @@
+<%- include('../header') %>
+
+<div style="max-width: 600px; margin: 60px auto; padding: 0 15px; text-align: center;">
+  <% const paid = donHang && donHang.trangThaiThanhToan === 'DaThanhToan'; %>
+
+  <% if (paid) { %>
+    <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 40px;">
+      <div style="font-size: 64px;">✅</div>
+      <h2 style="color: #155724; margin: 16px 0 8px;">Thanh toán thành công!</h2>
+      <p style="color: #155724;">Đơn hàng của bạn đã được thanh toán qua ZaloPay.</p>
+      <% if (donHang) { %>
+        <div style="background: white; border-radius: 6px; padding: 16px; margin: 20px 0; text-align: left;">
+          <p><strong>Mã đơn hàng:</strong> <%= donHang._id %></p>
+          <p><strong>Tổng tiền:</strong> <%= new Intl.NumberFormat('vi-VN').format(donHang.tongTien) %> đ</p>
+          <p><strong>Trạng thái:</strong> Đã thanh toán</p>
+        </div>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div style="background: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; padding: 40px;">
+      <div style="font-size: 64px;">⏳</div>
+      <h2 style="color: #856404; margin: 16px 0 8px;">Đang xử lý thanh toán</h2>
+      <p style="color: #856404;">Thanh toán đang được xác nhận. Vui lòng chờ trong giây lát.</p>
+      <% if (donHang) { %>
+        <div style="background: white; border-radius: 6px; padding: 16px; margin: 20px 0; text-align: left;">
+          <p><strong>Mã đơn hàng:</strong> <%= donHang._id %></p>
+          <p><strong>Tổng tiền:</strong> <%= new Intl.NumberFormat('vi-VN').format(donHang.tongTien) %> đ</p>
+        </div>
+        <button onclick="checkPaymentStatus('<%= donHang.zaloPayTransId %>', '<%= donHang._id %>')"
+                style="background: #f58220; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px;">
+          🔄 Kiểm tra trạng thái
+        </button>
+      <% } %>
+    </div>
+  <% } %>
+
+  <div style="margin-top: 24px; display: flex; gap: 12px; justify-content: center;">
+    <a href="/api/donhang/" style="background: #667eea; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+      📋 Xem đơn hàng
+    </a>
+    <a href="/" style="background: #e9ecef; color: #333; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+      🏠 Trang chủ
+    </a>
+  </div>
+</div>
+
+<script>
+  async function checkPaymentStatus(appTransId, donHangId) {
+    if (!appTransId) return;
+    try {
+      const res = await fetch('/zalopay/check-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ app_trans_id: appTransId }),
+      });
+      const data = await res.json();
+      if (data.return_code === 1) {
+        alert('Thanh toán thành công! Trang sẽ tự động làm mới.');
+        window.location.reload();
+      } else if (data.return_code === 2) {
+        alert('Thanh toán thất bại. Vui lòng thử lại.');
+      } else {
+        alert('Giao dịch chưa hoàn tất. Vui lòng thử lại sau.');
+      }
+    } catch (e) {
+      alert('Không thể kiểm tra trạng thái: ' + e.message);
+    }
+  }
+</script>
+
+<%- include('../footer') %>

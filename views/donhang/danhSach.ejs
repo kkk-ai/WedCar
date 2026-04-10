@@ -216,6 +216,35 @@
     color: #721c24;
   }
 
+  .pay-status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-left: 6px;
+  }
+
+  .pay-chua { background: #fff3cd; color: #856404; }
+  .pay-dang  { background: #cce5ff; color: #004085; }
+  .pay-da    { background: #d4edda; color: #155724; }
+  .pay-that  { background: #f8d7da; color: #721c24; }
+
+  .btn-zalopay-pay {
+    background: #0068ff;
+    color: white;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-zalopay-pay:hover { background: #0054cc; }
+
   .action-buttons {
     display: flex;
     gap: 10px;
@@ -374,6 +403,15 @@
               <div class="info-label">Tổng Tiền</div>
               <div class="info-value"><%= new Intl.NumberFormat('vi-VN').format(donHang.tongTien || 0) %> đ</div>
             </div>
+            <div class="info-item">
+              <div class="info-label">Thanh Toán</div>
+              <div class="info-value">
+                <%= donHang.phuongThucThanhToan === 'ZaloPay' ? '💙 ZaloPay' : '💵 COD' %>
+                <span class="pay-status-badge <%= donHang.trangThaiThanhToan === 'DaThanhToan' ? 'pay-da' : donHang.trangThaiThanhToan === 'DangXuLy' ? 'pay-dang' : donHang.trangThaiThanhToan === 'ThatBai' ? 'pay-that' : 'pay-chua' %>">
+                  <%= donHang.trangThaiThanhToan === 'DaThanhToan' ? '✅ Đã TT' : donHang.trangThaiThanhToan === 'DangXuLy' ? '⏳ Đang Xử Lý' : donHang.trangThaiThanhToan === 'ThatBai' ? '❌ Thất Bại' : '⏸️ Chưa TT' %>
+                </span>
+              </div>
+            </div>
           </div>
 
           <div class="order-items">
@@ -393,8 +431,9 @@
 
           <div class="action-buttons">
             <a href="/api/donhang/sua/<%= donHang._id %>" class="btn-sm btn-edit">✏️ Sửa</a>
-            <button class="btn-sm btn-delete" onclick="deleteOrder('<%= donHang._id %>')">🗑️ Xóa</button>
-          </div>
+            <button class="btn-sm btn-delete" onclick="deleteOrder('<%= donHang._id %>')">🗑️ Xóa</button>            <% if (donHang.phuongThucThanhToan === 'ZaloPay' && donHang.trangThaiThanhToan !== 'DaThanhToan') { %>
+              <button class="btn-zalopay-pay" onclick="retryZaloPay('<%= donHang._id %>')">\ud83d\udc99 Thanh toán ZaloPay</button>
+            <% } %>          </div>
         </div>
 
         <div style="text-align: center; padding: 10px; cursor: pointer;" onclick="toggleDetails('<%= donHang._id %>')">
@@ -461,6 +500,24 @@
         location.reload();
       })
       .catch(error => alert('Lỗi: ' + error.message));
+    }
+  }
+
+  async function retryZaloPay(donHangId) {
+    try {
+      const res = await fetch('/zalopay/payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ donHangId })
+      });
+      const data = await res.json();
+      if (res.ok && data.order_url) {
+        window.location.href = data.order_url;
+      } else {
+        alert('Không thể tạo đơn ZaloPay: ' + (data.message || ''));
+      }
+    } catch (e) {
+      alert('Lỗi: ' + e.message);
     }
   }
 </script>

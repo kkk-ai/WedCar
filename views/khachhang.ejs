@@ -125,32 +125,32 @@
       }
 
       try {
-        // 1. Tạo đơn hàng, trừ kho và tạo link momo
-        const momoRes = await fetch('/api/momo/checkout', {
+        // 1. Tạo đơn hàng nội bộ
+        const orderRes = await fetch('/api/donhang', {
           method: 'POST',
           credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ xeId: selectedCar._id })
+          body: JSON.stringify({
+            danhSachXe: [{ xe: selectedCar._id, soLuong: 1, giaTaiThoiDiemMua: selectedCar.giaBan }],
+            tongTien: selectedCar.giaBan
+          })
         });
 
-        if (momoRes.status === 401) {
+        if (orderRes.status === 401) {
           window.location.href = '/auth/dang-nhap';
           return;
         }
 
-        const momoData = await momoRes.json();
-        console.log('[payNow] momoData', momoData);
+        const orderData = await orderRes.json();
+        console.log('[payNow] orderData', orderData);
 
-        if (!momoRes.ok) {
-          alert('Thanh toán thất bại: ' + (momoData.message || 'Không xác định'));
+        if (!orderRes.ok) {
+          alert('Thanh toán thất bại: ' + (orderData.message || 'Không xác định'));
           return;
         }
 
-        if (momoData.payUrl) {
-          window.location.href = momoData.payUrl;
-        } else {
-          alert('Không lấy được liên kết Momo.');
-        }
+        alert('Thanh toán thành công, đơn hàng đã được ghi nhận.');
+        window.location.href = '/api/donhang';
       } catch (err) {
         alert('Lỗi mạng: ' + err.message);
       }

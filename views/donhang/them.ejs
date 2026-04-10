@@ -191,6 +191,51 @@
     opacity: 0.9;
   }
 
+  .btn-zalopay {
+    background: #0068ff;
+    color: white;
+  }
+
+  .btn-zalopay:hover {
+    background: #0054cc;
+  }
+
+  .payment-methods {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .payment-method-card {
+    flex: 1;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+
+  .payment-method-card.active {
+    border-color: #0068ff;
+    background: #f0f5ff;
+  }
+
+  .payment-method-card input[type=radio] {
+    display: none;
+  }
+
+  .payment-method-card img {
+    height: 28px;
+    margin-bottom: 4px;
+  }
+
+  .payment-method-label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+  }
+
   .btn-cancel {
     background: #e9ecef;
     color: #333;
@@ -330,8 +375,24 @@
                   style="height: 100px;"></textarea>
       </div>
 
+      <div class="form-group">
+        <label>Phương Thức Thanh Toán</label>
+        <div class="payment-methods">
+          <label class="payment-method-card active" id="card-cod">
+            <input type="radio" name="phuongThucThanhToan" value="COD" checked onchange="selectPayment('COD')">
+            <div style="font-size: 24px;">💵</div>
+            <div class="payment-method-label">Thanh toán khi nhận hàng (COD)</div>
+          </label>
+          <label class="payment-method-card" id="card-zalopay">
+            <input type="radio" name="phuongThucThanhToan" value="ZaloPay" onchange="selectPayment('ZaloPay')">
+            <div style="font-size: 24px;">💙</div>
+            <div class="payment-method-label">Thanh toán ZaloPay</div>
+          </label>
+        </div>
+      </div>
+
       <div class="form-actions">
-        <button type="submit" class="btn btn-submit">✔️ Tạo Đơn Hàng</button>
+        <button type="submit" class="btn btn-submit" id="btnSubmit">✔️ Tạo Đơn Hàng</button>
         <a href="/api/donhang/" class="btn btn-cancel">✕ Hủy</a>
       </div>
 
@@ -345,6 +406,21 @@
 
 <script>
   let selectedVehicles = {};
+  let selectedPayment = 'COD';
+
+  function selectPayment(method) {
+    selectedPayment = method;
+    document.getElementById('card-cod').classList.toggle('active', method === 'COD');
+    document.getElementById('card-zalopay').classList.toggle('active', method === 'ZaloPay');
+    const btn = document.getElementById('btnSubmit');
+    if (method === 'ZaloPay') {
+      btn.textContent = '💙 Tạo đơn & Thanh toán ZaloPay';
+      btn.className = 'btn btn-zalopay';
+    } else {
+      btn.textContent = '✔️ Tạo Đơn Hàng';
+      btn.className = 'btn btn-submit';
+    }
+  }
 
   function updateSelectedVehicles() {
     selectedVehicles = {};
@@ -430,27 +506,45 @@
       nguoiDung: '<%= user?._id || "" %>',
       danhSachXe: vehicleList,
       tongTien: parseInt(document.getElementById('totalPrice').textContent.replace(/\D/g, '')) || 0,
-      ghiChu: document.getElementById('ghiChu').value
+      ghiChu: document.getElementById('ghiChu').value,
+      phuongThucThanhToan: selectedPayment
     };
 
     document.getElementById('loadingSpinner').style.display = 'block';
 
     try {
+      // Bước 1: Tạo đơn hàng
       const response = await fetch('/api/donhang', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (!response.ok) {
+        alert('Lỗi: ' + (data.message || 'Không thể tạo đơn hàng'));
+        return;
+      }
+
+      // Bước 2: Nếu chọn ZaloPay, gọi API tạo đơn thanh toán
+      if (selectedPayment === 'ZaloPay') {
+        const zaloRes = await fetch('/zalopay/payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ donHangId: data.donHang._id })
+        });
+        const zaloData = await zaloRes.json();
+
+        if (zaloRes.ok && zaloData.order_url) {
+          window.location.href = zaloData.order_url;
+        } else {
+          alert('Đơn hàng đã tạo, nhưng không thể kết nối ZaloPay: ' + (zaloData.message || ''));
+          window.location.href = '/api/donhang/';
+        }
+      } else {
         alert('Tạo đơn hàng thành công!');
         window.location.href = '/api/donhang/';
-      } else {
-        alert('Lỗi: ' + (data.message || 'Không thể tạo đơn hàng'));
       }
     } catch (error) {
       alert('Lỗi: ' + error.message);
