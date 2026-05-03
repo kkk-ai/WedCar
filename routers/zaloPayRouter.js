@@ -14,8 +14,8 @@ const config = {
   key2: 'kLtgPl8HHhfvMuDHPwKfgfsY4Ydm9eIz',
   endpoint: 'https://sb-openapi.zalopay.vn/v2/create',
   // Thay bằng URL ngrok khi test callback, hoặc domain thực khi deploy
-  callback_url: process.env.ZALOPAY_CALLBACK_URL || 'http://localhost:3000/zalopay/callback',
-  redirect_url: process.env.ZALOPAY_REDIRECT_URL || 'http://localhost:3000/zalopay/result',
+callback_url: process.env.ZALOPAY_CALLBACK_URL || 'https://wedcar.onrender.com/zalopay/callback',
+  redirect_url: process.env.ZALOPAY_REDIRECT_URL || 'https://wedcar.onrender.com/',
 };
 
 // ----------------------------------------------------------------
