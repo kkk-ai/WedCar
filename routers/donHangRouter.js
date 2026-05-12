@@ -173,6 +173,15 @@ router.post('/', requireLogin, async (req, res) => {
       return res.status(400).json({ message: 'Vui lòng chọn ít nhất một xe' });
     }
 
+    // Kiểm tra số lượng tồn kho trước khi đặt
+    for (const item of danhSachXe) {
+      const car = await Xe.findById(item.xe);
+      if (!car) return res.status(404).json({ message: 'Xe trong đơn hàng không tồn tại' });
+      if (car.soLuongTon < (item.soLuong || 1)) {
+        return res.status(400).json({ message: `Xe ${car.tenXe} không đủ số lượng trong kho (chỉ còn ${car.soLuongTon})` });
+      }
+    }
+
     if (!thongTinKhachHang || typeof thongTinKhachHang !== 'object') {
       return res.status(400).json({ message: 'Thiếu thông tin khách hàng' });
     }
@@ -233,6 +242,12 @@ router.post('/', requireLogin, async (req, res) => {
     });
 
     const newDonHang = await donHang.save();
+    
+    // Trừ đi số lượng tồn của xe trong database
+    for (const item of danhSachXe) {
+      await Xe.findByIdAndUpdate(item.xe, { $inc: { soLuongTon: -(item.soLuong || 1) } });
+    }
+
     await newDonHang.populate(['nguoiDung', 'danhSachXe.xe', 'cuaHangNhanXe']);
     
     res.status(201).json({
