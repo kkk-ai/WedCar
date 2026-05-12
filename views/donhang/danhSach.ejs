@@ -387,7 +387,8 @@
     <div class="stat-card">
       <div class="stat-label">Đang Xử Lý</div>
       <div class="stat-value"><%= donHangList ? donHangList.filter(d => d.trangThai === 'DangXuLy').length : 0 %></div>
-   <% if (user && user.quyenHan === 'quanTri') { %>
+    </div>
+    <% if (user && user.quyenHan === 'quanTri') { %>
     <div class="stat-card">
       <div class="stat-label">Tổng Doanh Thu</div>
       <div class="stat-value">
