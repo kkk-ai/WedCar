@@ -439,8 +439,8 @@
               <div class="info-value"><%= donHang.danhSachXe?.length || 0 %> xe</div>
             </div>
             <div class="info-item">
-              <div class="info-label">Tổng Tiền</div>
-              <div class="info-value"><%= new Intl.NumberFormat('vi-VN').format(donHang.tongTien || 0) %> đ</div>
+            <div class="info-label">Tiền Cọc (30%)</div>
+            <div class="info-value"><%= new Intl.NumberFormat('vi-VN').format(Math.round((donHang.tongTien || 0) * 0.3)) %> đ</div>
             </div>
             <div class="info-item">
               <div class="info-label">Thanh Toán</div>
