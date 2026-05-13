@@ -243,9 +243,17 @@ router.post('/', requireLogin, async (req, res) => {
 
     const newDonHang = await donHang.save();
     
-    // Trừ đi số lượng tồn của xe trong database
+    // Chuẩn hóa và gộp số lượng nếu có xe trùng lặp trong mảng, đồng thời ép kiểu dữ liệu
+    const chiTietTruKho = {};
     for (const item of danhSachXe) {
-      await Xe.findByIdAndUpdate(item.xe, { $inc: { soLuongTon: -(item.soLuong || 1) } });
+      const xeId = String(item.xe);
+      const soLuongMua = Number(item.soLuong) || 1;
+      chiTietTruKho[xeId] = (chiTietTruKho[xeId] || 0) + soLuongMua;
+    }
+
+    // Thực hiện trừ kho chính xác
+    for (const [xeId, soLuongTru] of Object.entries(chiTietTruKho)) {
+      await Xe.findByIdAndUpdate(xeId, { $inc: { soLuongTon: -soLuongTru } });
     }
 
     await newDonHang.populate(['nguoiDung', 'danhSachXe.xe', 'cuaHangNhanXe']);
