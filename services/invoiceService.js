@@ -166,7 +166,7 @@ function generateInvoicePdfBuffer(donHang) {
     doc.text('Thuế VAT (10%):', 320, currentY + 26, { width: 120, align: 'right' });
     doc.text(`${formatCurrency(vat)} VND`, 444, currentY + 26, { width: 108, align: 'right' });
     doc.font(font.bold).text('Tổng thanh toán:', 320, currentY + 44, { width: 120, align: 'right' });
-    doc.text(`${formatCurrency(total)} VND`, 444, currentY + 44, { width: 108, align: 'right' });
+    doc.text(`${formatCurrency(Math.round(total * 0.3))} VND`, 444, currentY + 44, { width: 108, align: 'right' });
     doc.font(font.regular);
 
     doc.moveDown(5.2);
